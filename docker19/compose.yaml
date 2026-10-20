@@ -1,0 +1,30 @@
+
+name: geriatrics19
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - geriatrics19_db:/var/lib/postgresql/data
+
+  web:
+    image: odoo:19
+    depends_on:
+      - db
+    ports:
+      - "8072:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - ../geriatrics_19:/mnt/extra-addons/geriatrics_19
+      - geriatrics19_odoo:/var/lib/odoo
+
+volumes:
+  geriatrics19_db:
+  geriatrics19_odoo:
