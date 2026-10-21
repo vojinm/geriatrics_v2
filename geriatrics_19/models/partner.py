@@ -17,3 +17,11 @@ class ResPartner(models.Model):
         string='Prezime',
     )
 
+    sex = fields.Selection(
+        selection=[
+            ('male', 'Muško'), 
+            ('female', 'Žensko')
+        ],
+        string='Pol',
+    )
+    
