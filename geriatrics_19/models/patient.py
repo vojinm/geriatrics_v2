@@ -4,6 +4,12 @@ class MedicalPatient(models.Model):
     _name = 'medical.patient'
     _description = 'Pacijent'
 
+    patient_number = fields.Char(
+        string='Broj pacijenta',
+        required=True,
+        index=True,
+    )
+    
     partner_id = fields.Many2one(
         'res.partner', 
         string='Kontakt', 

@@ -8,3 +8,12 @@ class ResPartner(models.Model):
         'partner_id',
         string='Pacijent',
     )
+
+    birthdate = fields.Date(
+        string='Datum rođenja',
+    )
+
+    lastname = fields.Char(
+        string='Prezime',
+    )
+
