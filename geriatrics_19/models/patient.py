@@ -9,6 +9,12 @@ class MedicalPatient(models.Model):
         required=True,
         index=True,
     )
+
+    jmbg = fields.Char(
+        string='JMBG',
+        groups='geriatrics_19.group_patient_sensitive_data',
+        copy=False,
+    )
     
     partner_id = fields.Many2one(
         'res.partner', 

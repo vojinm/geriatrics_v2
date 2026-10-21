@@ -1,0 +1,5 @@
+<odoo>
+    <record id="group_patient_sensitive_data" model="res.groups">
+        <field name="name">Gerijatrija - Osjetljivi podaci pacijenata</field>
+    </record>
+</odoo>

@@ -87,3 +87,37 @@ Ugovarače treba preuzimati iz ugovora, a ne iz gotovo nekorištenog polja `medi
 ## 6. Status
 
 Dokument se dopunjava tokom razvoja modula `geriatrics_19`. Nijedno pravilo migracije ne treba smatrati implementiranim samo zato što je dokumentovano.
+
+## 7. JMBG i datum rođenja – potvrđena analiza
+
+### Izvor podataka
+
+Stvarni Odoo 8 modul: hms_geriatrics (8.0.1.00).
+Izvorni kod: C:\odoo8ger\addons\hms_geriatrics.
+
+JMBG je izračunato polje medical.patient.jmbg,
+koje čita i upisuje vrijednost u res.partner.ref.
+
+Migracioni izvor:
+medical_patient.name -> res_partner.id -> res_partner.ref
+
+### Rezultati
+
+- Ukupno pacijenata: 2394
+- Popunjen JMBG/ref: 2324
+- Bez JMBG-a: 70
+- Različitih popunjenih vrijednosti: 2324
+- Vrijednosti sa tačno 13 cifara: 2292
+- Vrijednosti neispravnog formata: 32
+- Pacijenti s datumom rođenja (medical_patient.dob): 2394
+
+### Pravila migracije
+
+- Sačuvati sve izvorne JMBG vrijednosti.
+- Ne odbacivati niti automatski ispravljati 32 problematične vrijednosti.
+- Ne generisati JMBG za pacijente kojima nedostaje.
+- Datum rođenja prenijeti iz medical_patient.dob
+  u res.partner.birthdate odgovarajućeg kontakta.
+- JMBG ne smještati automatski u standardno res.partner.ref.
+- Prije implementacije definisati sigurno čuvanje JMBG-a,
+  prava pristupa i postupak validacije.
