@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_medical_patient_user,medical.patient.user,model_medical_patient,base.group_user,1,1,1,0
+access_relationship_type_user,relationship.type.user,model_geriatrics_relationship_type,base.group_user,1,0,0,0
+access_relationship_type_admin,relationship.type.admin,model_geriatrics_relationship_type,base.group_system,1,1,1,1
+access_family_relation_user,family.relation.user,model_geriatrics_family_relation,base.group_user,1,1,1,0
