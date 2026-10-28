@@ -26,3 +26,9 @@ Thumbs.db
 
 # Odoo / i18n (if you add translations later)
 # *.mo
+
+# Local migration data and database backups
+/migration/
+/family_relations_155.csv
+/family_relations_155_utf8.csv
+/relationship_values.csv
