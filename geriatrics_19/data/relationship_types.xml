@@ -1,0 +1,284 @@
+<odoo>
+    <data noupdate="1">
+
+        <!-- Porodični odnosi -->
+        <record id="rel_sin" model="geriatrics.relationship.type">
+            <field name="name">sin</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_kcerka" model="geriatrics.relationship.type">
+            <field name="name">kćerka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_brat" model="geriatrics.relationship.type">
+            <field name="name">brat</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sestra" model="geriatrics.relationship.type">
+            <field name="name">sestra</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_suprug" model="geriatrics.relationship.type">
+            <field name="name">suprug</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_supruga" model="geriatrics.relationship.type">
+            <field name="name">supruga</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_majka" model="geriatrics.relationship.type">
+            <field name="name">majka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_otac" model="geriatrics.relationship.type">
+            <field name="name">otac</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_unuk" model="geriatrics.relationship.type">
+            <field name="name">unuk</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_unuka" model="geriatrics.relationship.type">
+            <field name="name">unuka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_snaha" model="geriatrics.relationship.type">
+            <field name="name">snaha</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_zet" model="geriatrics.relationship.type">
+            <field name="name">zet</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sinovac" model="geriatrics.relationship.type">
+            <field name="name">sinovac</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sestric" model="geriatrics.relationship.type">
+            <field name="name">sestrić</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sestricina" model="geriatrics.relationship.type">
+            <field name="name">sestričina</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_bratic" model="geriatrics.relationship.type">
+            <field name="name">bratić</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_rodjak" model="geriatrics.relationship.type">
+            <field name="name">rođak</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_rodjaka" model="geriatrics.relationship.type">
+            <field name="name">rođaka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_tetka" model="geriatrics.relationship.type">
+            <field name="name">tetka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_djever" model="geriatrics.relationship.type">
+            <field name="name">djever</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_svastika" model="geriatrics.relationship.type">
+            <field name="name">svastika</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_pastorak" model="geriatrics.relationship.type">
+            <field name="name">pastorak</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_pastorka" model="geriatrics.relationship.type">
+            <field name="name">pastorka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_rodica" model="geriatrics.relationship.type">
+            <field name="name">rodica</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_necakinja" model="geriatrics.relationship.type">
+            <field name="name">nećakinja</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_bivsa_supruga" model="geriatrics.relationship.type">
+            <field name="name">bivša supruga</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sestricna" model="geriatrics.relationship.type">
+            <field name="name">sestrična</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_braticka" model="geriatrics.relationship.type">
+            <field name="name">bratićka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_prija" model="geriatrics.relationship.type">
+            <field name="name">prija</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_necak" model="geriatrics.relationship.type">
+            <field name="name">nećak</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_sinovka" model="geriatrics.relationship.type">
+            <field name="name">sinovka</field>
+            <field name="category">family</field>
+        </record>
+
+        <record id="rel_necaka" model="geriatrics.relationship.type">
+            <field name="name">nećaka</field>
+            <field name="category">family</field>
+        </record>
+
+        <!-- Dodatni porodični odnosi -->
+        <record id="rel_zaova" model="geriatrics.relationship.type">
+            <field name="name">zaova</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_ujna" model="geriatrics.relationship.type">
+            <field name="name">ujna</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_maceha" model="geriatrics.relationship.type">
+            <field name="name">maćeha</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_stric" model="geriatrics.relationship.type">
+            <field name="name">stric</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_ujak" model="geriatrics.relationship.type">
+            <field name="name">ujak</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_surjak" model="geriatrics.relationship.type">
+            <field name="name">šurjak</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_jetrva" model="geriatrics.relationship.type">
+            <field name="name">jetrva</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_bratanac" model="geriatrics.relationship.type">
+            <field name="name">bratanac</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_bratanicna" model="geriatrics.relationship.type">
+            <field name="name">bratanična</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_polubrat" model="geriatrics.relationship.type">
+            <field name="name">polubrat</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_polusestra" model="geriatrics.relationship.type">
+            <field name="name">polusestra</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_bivsi_suprug" model="geriatrics.relationship.type">
+            <field name="name">bivši suprug</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_nevjencani_suprug" model="geriatrics.relationship.type">
+            <field name="name">nevjenčani suprug</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_vanbracna_supruga" model="geriatrics.relationship.type">
+            <field name="name">vanbračna supruga</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_svekar" model="geriatrics.relationship.type">
+            <field name="name">svekar</field>
+            <field name="category">family</field>
+        </record>
+        <record id="rel_tetak" model="geriatrics.relationship.type">
+            <field name="name">tetak</field>
+            <field name="category">family</field>
+        </record>
+
+        <!-- Lični odnosi -->
+        <record id="rel_prijatelj" model="geriatrics.relationship.type">
+            <field name="name">prijatelj</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_prijateljica" model="geriatrics.relationship.type">
+            <field name="name">prijateljica</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_komsija" model="geriatrics.relationship.type">
+            <field name="name">komšija</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_komsinica" model="geriatrics.relationship.type">
+            <field name="name">komšinica</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_poznanik" model="geriatrics.relationship.type">
+            <field name="name">poznanik</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_poznanica" model="geriatrics.relationship.type">
+            <field name="name">poznanica</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_kum" model="geriatrics.relationship.type">
+            <field name="name">kum</field>
+            <field name="category">personal</field>
+        </record>
+
+        <record id="rel_kuma" model="geriatrics.relationship.type">
+            <field name="name">kuma</field>
+            <field name="category">personal</field>
+        </record>
+
+        <!-- Ostali odnosi -->
+        <record id="rel_posrednik" model="geriatrics.relationship.type">
+            <field name="name">posrednik</field>
+            <field name="category">other</field>
+        </record>
+
+        <record id="rel_kontakt_osoba" model="geriatrics.relationship.type">
+            <field name="name">kontakt osoba</field>
+            <field name="category">other</field>
+        </record>
+
+    </data>
+</odoo>

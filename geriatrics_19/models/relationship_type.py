@@ -11,6 +11,17 @@ class RelationshipType(models.Model):
         required=True,
     )
 
+    category = fields.Selection(
+        selection=[
+            ('family', 'Porodični odnos'),
+            ('personal', 'Lični odnos'),
+            ('other', 'Ostalo'),
+        ],
+        string='Kategorija odnosa',
+        required=True,
+        default='family',
+    )
+
     active = fields.Boolean(
         string='Aktivno',
         default=True,

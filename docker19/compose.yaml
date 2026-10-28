@@ -24,7 +24,8 @@ services:
     volumes:
       - ../geriatrics_19:/mnt/extra-addons/geriatrics_19
       - geriatrics19_odoo:/var/lib/odoo
-
+      - ../migration:/mnt/migration:ro
+      
 volumes:
   geriatrics19_db:
   geriatrics19_odoo:
