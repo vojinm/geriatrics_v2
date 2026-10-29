@@ -38,6 +38,20 @@ class MedicalPatient(models.Model):
         required=True, 
         ondelete='restrict'
     )
+
+    name = fields.Char(
+        string='Ime pacijenta',
+        related='partner_id.name',
+        readonly=True,
+    )
+
+
+    lastname = fields.Char(
+        string='Prezime pacijenta',
+        related='partner_id.lastname',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'

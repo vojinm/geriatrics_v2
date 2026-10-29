@@ -5,7 +5,8 @@
         <field name="arch" type="xml">
             <list string="Pacijenti">
                 <field name="patient_number"/>
-                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="lastname"/>
                 <field name="active"/>
             </list>
         </field>
@@ -19,6 +20,8 @@
                 <sheet>
                     <group>
                         <field name="patient_number"/>
+                        <field name="name"/>
+                        <field name="lastname"/>
                         <field name="partner_id"/>
                         <field name="active"/>
                     </group>
