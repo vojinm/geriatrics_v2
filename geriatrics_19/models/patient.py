@@ -70,6 +70,12 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    phone = fields.Char(
+        string='Telefon',
+        related='partner_id.phone',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'

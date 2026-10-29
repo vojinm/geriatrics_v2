@@ -27,6 +27,7 @@
                         <field name="birthdate"/>
                         <field name="birth_place"/>
                         <field name="sex"/>
+                        <field name="phone"/>
                         <field name="partner_id"/>
                         <field name="active"/>
                     </group>
