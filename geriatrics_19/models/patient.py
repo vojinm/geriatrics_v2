@@ -82,6 +82,43 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    email = fields.Char(
+        string='E-mail',
+        related='partner_id.email',
+        readonly=True,
+    )
+
+    street = fields.Char(
+        string='Ulica i broj',
+        related='partner_id.street',
+        readonly=True,
+    )
+
+    street2 = fields.Char(
+        string='Dodatna adresa',
+        related='partner_id.street2',
+        readonly=True,
+    )
+
+    zip = fields.Char(
+        string='Poštanski broj',
+        related='partner_id.zip',
+        readonly=True,
+    )
+
+    city = fields.Char(
+        string='Grad',
+        related='partner_id.city',
+        readonly=True,
+    )
+
+    country_id = fields.Many2one(
+        'res.country',
+        string='Država',
+        related='partner_id.country_id',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'

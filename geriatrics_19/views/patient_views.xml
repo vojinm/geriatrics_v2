@@ -32,6 +32,14 @@
                         <field name="partner_id"/>
                         <field name="active"/>
                     </group>
+                    <group string="Kontakt i adresa">
+                        <field name="email"/>
+                        <field name="street"/>
+                        <field name="street2"/>
+                        <field name="zip"/>
+                        <field name="city"/>
+                        <field name="country_id"/>
+                    </group>
                 </sheet>
             </form>
         </field>
