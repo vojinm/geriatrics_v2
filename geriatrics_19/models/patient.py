@@ -58,6 +58,12 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    sex = fields.Selection(
+        related='partner_id.sex',
+        string='Pol',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'
