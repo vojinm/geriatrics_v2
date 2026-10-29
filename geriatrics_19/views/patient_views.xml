@@ -21,6 +21,7 @@
                     <group>
                         <field name="patient_number"/>
                         <field name="jmbg" groups="geriatrics_19.group_patient_sensitive_data"/>
+                        <field name="id_number" groups="geriatrics_19.group_patient_sensitive_data"/>
                         <field name="name"/>
                         <field name="lastname"/>
                         <field name="birthdate"/>
