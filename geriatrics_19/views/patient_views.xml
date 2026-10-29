@@ -23,6 +23,7 @@
                         <field name="name"/>
                         <field name="lastname"/>
                         <field name="birthdate"/>
+                        <field name="birth_place"/>
                         <field name="sex"/>
                         <field name="partner_id"/>
                         <field name="active"/>

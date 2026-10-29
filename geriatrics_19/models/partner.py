@@ -21,6 +21,10 @@ class ResPartner(models.Model):
         string='Datum rođenja',
     )
 
+    birth_place = fields.Char(
+        string='Mjesto rođenja',
+    )
+
     lastname = fields.Char(
         string='Prezime',
     )

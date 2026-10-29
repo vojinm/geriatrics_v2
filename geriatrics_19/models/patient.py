@@ -58,6 +58,12 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    birth_place = fields.Char(
+        string='Mjesto rođenja',
+        related='partner_id.birth_place',
+        readonly=True,
+    )
+
     sex = fields.Selection(
         related='partner_id.sex',
         string='Pol',
