@@ -9,6 +9,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/relationship_types.xml',
+        'views/patient_views.xml',
     ],
     'application': True,
     'installable': True,
