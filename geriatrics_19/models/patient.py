@@ -52,6 +52,12 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    birthdate = fields.Date(
+        string='Datum rođenja',
+        related='partner_id.birthdate',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'
