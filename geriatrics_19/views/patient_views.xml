@@ -40,6 +40,15 @@
                         <field name="city"/>
                         <field name="country_id"/>
                     </group>
+                    <group string="Članovi porodice">
+                        <field name="family_relation_ids" readonly="1">
+                            <list>
+                                <field name="family_partner_id"/>
+                                <field name="relationship_type_id"/>
+                                <field name="note"/>
+                            </list>
+                        </field>
+                    </group>
                 </sheet>
             </form>
         </field>

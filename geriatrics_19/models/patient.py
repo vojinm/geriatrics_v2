@@ -119,6 +119,14 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    family_relation_ids = fields.One2many(
+        'geriatrics.family.relation',
+        'family_partner_id',
+        string='Članovi porodice',
+        related='partner_id.family_relation_ids',
+        readonly=True,
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'

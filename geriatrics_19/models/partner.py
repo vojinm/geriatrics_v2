@@ -17,6 +17,12 @@ class ResPartner(models.Model):
         string='Pacijent',
     )
 
+    family_relation_ids = fields.One2many(
+        'geriatrics.family.relation',
+        'partner_id',
+        string='Članovi porodice',
+    )
+
     birthdate = fields.Date(
         string='Datum rođenja',
     )
