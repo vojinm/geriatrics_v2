@@ -1,4 +1,5 @@
-from odoo import models, fields
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class MadicalPatientContract(models.Model):
     _name = 'medical.patient.contract'
@@ -57,3 +58,12 @@ class MadicalPatientContract(models.Model):
         "(patient_id) WHERE state = 'open'",
         "Pacijent već ima otvoren ugovor."
     )
+
+    @api.constrains('date_start', 'date_end')
+    def _check_dates(self):
+        for contract in self:
+            if contract.date_end and contract.date_start:
+                if contract.date_end < contract.date_start:
+                    raise ValidationError(
+                        "Datum završetka ugovora ne može biti raniji od datuma početka."
+                    )
