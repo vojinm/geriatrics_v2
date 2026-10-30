@@ -45,6 +45,8 @@
                             <list>
                                 <field name="family_partner_id"/>
                                 <field name="relationship_type_id"/>
+                                <field name="phone"/>
+                                <field name="mobile"/>
                                 <field name="note"/>
                             </list>
                         </field>

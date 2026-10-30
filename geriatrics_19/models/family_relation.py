@@ -17,6 +17,18 @@ class FamilyRelation(models.Model):
         ondelete='restrict',
     )
 
+    phone = fields.Char(
+        string='Telefon',
+        related='family_partner_id.phone',
+        readonly=True,
+    )
+
+    mobile = fields.Char(
+        string='Mobilni telefon',
+        related='family_partner_id.mobile',
+        readonly=True,
+    )
+
     relationship_type_id = fields.Many2one(
         'geriatrics.relationship.type',
         string='Vrsta srodstva',
