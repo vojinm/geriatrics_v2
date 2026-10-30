@@ -20,37 +20,50 @@
                 <sheet>
                     <group>
                         <field name="patient_number"/>
-                        <field name="jmbg" groups="geriatrics_19.group_patient_sensitive_data"/>
-                        <field name="id_number" groups="geriatrics_19.group_patient_sensitive_data"/>
-                        <field name="name"/>
-                        <field name="lastname"/>
-                        <field name="birthdate"/>
-                        <field name="birth_place"/>
-                        <field name="sex"/>
-                        <field name="phone"/>
-                        <field name="mobile"/>
                         <field name="partner_id"/>
                         <field name="active"/>
                     </group>
-                    <group string="Kontakt i adresa">
-                        <field name="email"/>
-                        <field name="street"/>
-                        <field name="street2"/>
-                        <field name="zip"/>
-                        <field name="city"/>
-                        <field name="country_id"/>
-                    </group>
-                    <group string="Članovi porodice">
-                        <field name="family_relation_ids" readonly="1">
-                            <list>
-                                <field name="family_partner_id"/>
-                                <field name="relationship_type_id"/>
+
+                    <notebook>
+                        <page string="Lični podaci" name="personal_data">
+                            <group>
+                                <field name="name"/>
+                                <field name="lastname"/>
+                                <field name="jmbg"
+                                    groups="geriatrics_19.group_patient_sensitive_data"/>
+                                <field name="id_number"
+                                    groups="geriatrics_19.group_patient_sensitive_data"/>
+                                <field name="birthdate"/>
+                                <field name="birth_place"/>
+                                <field name="sex"/>
+                            </group>
+                        </page>
+
+                        <page string="Kontakt i adresa" name="contact_data">
+                            <group>
                                 <field name="phone"/>
                                 <field name="mobile"/>
-                                <field name="note"/>
-                            </list>
-                        </field>
-                    </group>
+                                <field name="email"/>
+                                <field name="street"/>
+                                <field name="street2"/>
+                                <field name="zip"/>
+                                <field name="city"/>
+                                <field name="country_id"/>
+                            </group>
+                        </page>
+
+                        <page string="Članovi porodice" name="family_data">
+                            <field name="family_relation_ids" readonly="1">
+                                <list>
+                                    <field name="family_partner_id"/>
+                                    <field name="relationship_type_id"/>
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
