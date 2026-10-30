@@ -120,6 +120,12 @@ class MedicalPatient(models.Model):
         readonly=False,
     )
 
+    contract_ids = fields.One2many(
+        comodel_name='medical.patient.contract',
+        inverse_name='patient_id',
+        string='Ugovori'
+    )
+
     family_relation_ids = fields.One2many(
         'geriatrics.family.relation',
         'family_partner_id',

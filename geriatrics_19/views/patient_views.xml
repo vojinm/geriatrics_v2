@@ -63,6 +63,18 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Ugovori" name="contracts">
+                            <field name="contract_ids">
+                                <list string="Ugovori">
+                                    <field name="name"/>
+                                    <field name="requester_id"/>
+                                    <field name="contractor_id"/>
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
