@@ -67,3 +67,10 @@ class MadicalPatientContract(models.Model):
                     raise ValidationError(
                         "Datum završetka ugovora ne može biti raniji od datuma početka."
                     )
+    @api.constrains('state', 'date_end')
+    def _check_closed_contract_date_end(self):
+        for contract in self:
+            if contract.state == 'closed' and not contract.date_end:
+                raise ValidationError(
+                    "Zatvoreni ugovor mora imati datum završetka."
+                )
