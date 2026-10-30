@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -50,4 +50,15 @@ class ResPartner(models.Model):
         copy=False,
         index=True,
     )
+
+    @api.depends('name', 'lastname', 'is_company')
+    def _compute_display_name(self):
+        super()._compute_display_name()
+
+        for partner in self:
+            if not partner.is_company and partner.lastname:
+                first_name = partner.name or ''
+                partner.display_name = (
+                    f'{first_name} {partner.lastname}'
+                ).strip()
 

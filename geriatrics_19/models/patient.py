@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class MedicalPatient(models.Model):
     _name = 'medical.patient'
@@ -42,81 +43,81 @@ class MedicalPatient(models.Model):
     name = fields.Char(
         string='Ime pacijenta',
         related='partner_id.name',
-        readonly=True,
+        readonly=False,
     )
 
 
     lastname = fields.Char(
         string='Prezime pacijenta',
         related='partner_id.lastname',
-        readonly=True,
+        readonly=False,
     )
 
     birthdate = fields.Date(
         string='Datum rođenja',
         related='partner_id.birthdate',
-        readonly=True,
+        readonly=False,
     )
 
     birth_place = fields.Char(
         string='Mjesto rođenja',
         related='partner_id.birth_place',
-        readonly=True,
+        readonly=False,
     )
 
     sex = fields.Selection(
         related='partner_id.sex',
         string='Pol',
-        readonly=True,
+        readonly=False,
     )
 
     phone = fields.Char(
         string='Telefon',
         related='partner_id.phone',
-        readonly=True,
+        readonly=False,
     )
 
     mobile = fields.Char(
         string='Mobilni telefon',
         related='partner_id.mobile',
-        readonly=True,
+        readonly=False,
     )
 
     email = fields.Char(
         string='E-mail',
         related='partner_id.email',
-        readonly=True,
+        readonly=False,
     )
 
     street = fields.Char(
         string='Ulica i broj',
         related='partner_id.street',
-        readonly=True,
+        readonly=False,
     )
 
     street2 = fields.Char(
         string='Dodatna adresa',
         related='partner_id.street2',
-        readonly=True,
+        readonly=False,
     )
 
     zip = fields.Char(
         string='Poštanski broj',
         related='partner_id.zip',
-        readonly=True,
+        readonly=False,
     )
 
     city = fields.Char(
         string='Grad',
         related='partner_id.city',
-        readonly=True,
+        readonly=False,
     )
 
     country_id = fields.Many2one(
         'res.country',
         string='Država',
         related='partner_id.country_id',
-        readonly=True,
+        readonly=False,
     )
 
     family_relation_ids = fields.One2many(
@@ -131,3 +132,27 @@ class MedicalPatient(models.Model):
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        partner_fields = [
+            'name', 'lastname', 'birthdate', 'birth_place',
+            'sex', 'phone', 'mobile', 'email',
+            'street', 'street2', 'zip', 'city', 'country_id',
+        ]
+
+        for vals in vals_list:
+            if not vals.get('partner_id'):
+                partner_vals = {}
+
+                for field_name in partner_fields:
+                    if field_name in vals:
+                        partner_vals[field_name] = vals.pop(field_name)
+
+                if not partner_vals.get('name'):
+                    raise ValueError("Ime pacijenta je obavezno.")
+
+                partner = self.env['res.partner'].create(partner_vals)
+                vals['partner_id'] = partner.id
+
+        return super().create(vals_list)
