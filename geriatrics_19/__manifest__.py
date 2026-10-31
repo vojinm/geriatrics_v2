@@ -4,7 +4,7 @@
     'summary': 'Evidencija pacijenata gerijatrijske ustanove',
     'category': 'Healthcare',
     'author': 'Voyin',
-    'depends': ['base'],
+    'depends': ['base', 'mail'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

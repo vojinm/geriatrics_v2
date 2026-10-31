@@ -1,8 +1,9 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
-class MadicalPatientContract(models.Model):
+class MedicalPatientContract(models.Model):
     _name = 'medical.patient.contract'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Ugovor pacijenta'
     _order = 'date_start desc, id desc'
 
@@ -34,10 +35,12 @@ class MadicalPatientContract(models.Model):
         string='Datum početka',
         required=True,
         default=fields.Date.context_today,
+        tracking=True,
     )
 
     date_end = fields.Date(
         string='Datum završetka',
+        tracking=True,
     )
 
     state = fields.Selection(
@@ -48,6 +51,7 @@ class MadicalPatientContract(models.Model):
         string='Status',
         required=True,
         default='open',
+        tracking=True,
     )
 
     note = fields.Text(
