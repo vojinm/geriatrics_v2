@@ -63,6 +63,41 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Plan zaštite" name="care_plan">
+                            <group string="Procjena stanja" col="2">
+                                <field name="current_functioning"
+                                    nolabel="1"
+                                    placeholder="Procjena trenutnog funkcionisanja..."
+                                    colspan="2"/>
+                                <field name="adaptation_help"
+                                    nolabel="1"
+                                    placeholder="Pomoć pri adaptaciji..."
+                                    colspan="2"/>
+                            </group>
+
+                            <group string="Planirane aktivnosti" col="2">
+                                <field name="family_plan"
+                                    nolabel="1"
+                                    placeholder="Plan rada s porodicom..."
+                                    colspan="2"/>
+                                <field name="freetime_plan"
+                                    nolabel="1"
+                                    placeholder="Plan slobodnog vremena..."
+                                    colspan="2"/>
+                            </group>
+
+                            <group string="Ciljevi" col="2">
+                                <field name="short_goals"
+                                    nolabel="1"
+                                    placeholder="Kratkoročni ciljevi..."
+                                    colspan="2"/>
+                                <field name="long_goals"
+                                    nolabel="1"
+                                    placeholder="Dugoročni ciljevi..."
+                                    colspan="2"/>
+                            </group>
+                        </page>
+
                         <page string="Ugovori" name="contracts">
                             <field name="contract_ids">
                                 <list string="Ugovori">

@@ -134,10 +134,44 @@ class MedicalPatient(models.Model):
         readonly=True,
     )
 
+    # Plan zaštite pacijenta
+    current_functioning = fields.Text(
+        string='Procjena trenutnog funkcionisanja',
+    )
+
+    adaptation_help = fields.Text(
+        string='Pomoć pri adaptaciji',
+    )
+
+    family_plan = fields.Text(
+        string='Plan rada s porodicom',
+    )
+
+    freetime_plan = fields.Text(
+        string='Plan slobodnog vremena',
+    )
+
+    short_goals = fields.Text(
+        string='Kratkoročni ciljevi',
+    )
+
+    long_goals = fields.Text(
+        string='Dugoročni ciljevi',
+    )
+
     _unique_partner = models.Constraint(
         'UNIQUE(partner_id)',
         'Ovaj kontakt je već registrovan kao pacijent.'
     )
+
+    @api.depends('name', 'lastname')
+    def _compute_display_name(self):
+        for patient in self:
+            full_name = ' '.join(
+                part for part in [patient.name, patient.lastname]
+                if part
+            )
+            patient.display_name = full_name or f"Pacijent {patient.id}"
 
     @api.model_create_multi
     def create(self, vals_list):
