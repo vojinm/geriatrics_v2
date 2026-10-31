@@ -10,6 +10,7 @@ class MedicalPatientContract(models.Model):
     name = fields.Char(
         string='Broj ugovora',
         required=True,
+        tracking=True,
     )
 
     patient_id = fields.Many2one(
@@ -17,18 +18,21 @@ class MedicalPatientContract(models.Model):
         string='Pacijent',
         required=True,
         ondelete='restrict',
+        tracking=True,
     )
 
     requester_id = fields.Many2one(
         'res.partner',
         string='Naručilac',
         ondelete='restrict',
+        tracking=True,
     )
 
     contractor_id = fields.Many2one(
         'res.partner',
         string='Ugovarač',
         ondelete='restrict',
+        tracking=True,
     )
 
     date_start = fields.Date(
