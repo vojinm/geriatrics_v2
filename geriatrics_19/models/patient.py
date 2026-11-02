@@ -40,6 +40,12 @@ class MedicalPatient(models.Model):
         ondelete='restrict'
     )
 
+    image_1920 = fields.Image(
+        string='Fotografija pacijenta',
+        related='partner_id.image_1920',
+        readonly=False,
+    )
+
     name = fields.Char(
         string='Ime pacijenta',
         related='partner_id.name',
@@ -58,6 +64,23 @@ class MedicalPatient(models.Model):
         related='partner_id.birthdate',
         readonly=False,
     )
+
+    age = fields.Integer(
+        string='Starost',
+        compute='_compute_age',
+    )
+
+    @api.depends('birthdate')
+    def _compute_age(self):
+        today = fields.Date.context_today(self)
+        for patient in self:
+            if patient.birthdate:
+                birthdate = patient.birthdate
+                patient.age = (
+                    today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+                )
+            else:
+                patient.age = 0
 
     birth_place = fields.Char(
         string='Mjesto rođenja',
@@ -124,6 +147,20 @@ class MedicalPatient(models.Model):
         comodel_name='medical.patient.contract',
         inverse_name='patient_id',
         string='Ugovori'
+    )
+
+    tracking_list_ids = fields.One2many(
+        'medical.patient.tracking.list',
+        'patient_id',
+        string='Evidencija rada',
+    )
+
+    activities_id = fields.Many2many(
+        'medical.patient.activities',
+        'medical_relation_patient_activities',
+        'patient_id',
+        'activity_id',
+        string='Aktivnosti pacijenta',
     )
 
     family_relation_ids = fields.One2many(

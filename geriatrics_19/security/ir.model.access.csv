@@ -4,3 +4,5 @@ access_relationship_type_user,relationship.type.user,model_geriatrics_relationsh
 access_relationship_type_admin,relationship.type.admin,model_geriatrics_relationship_type,base.group_system,1,1,1,1
 access_family_relation_user,family.relation.user,model_geriatrics_family_relation,base.group_user,1,1,1,0
 access_medical_patient_contract_user,medical.patient.contract.user,model_medical_patient_contract,base.group_user,1,1,1,0
+access_medical_patient_tracking_user,medical.patient.tracking.list user,model_medical_patient_tracking_list,base.group_user,1,1,1,0
+access_medical_patient_activities_user,medical.patient.activities user,model_medical_patient_activities,base.group_user,1,1,1,0

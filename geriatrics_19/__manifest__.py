@@ -12,6 +12,7 @@
         'views/patient_views.xml',
         'views/patient_contract_views.xml',
         'views/partner_views.xml',
+        'views/patient_activity_views.xml'
     ],
     'application': True,
     'installable': True,

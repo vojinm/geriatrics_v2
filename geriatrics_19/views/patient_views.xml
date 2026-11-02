@@ -1,4 +1,56 @@
+
 <odoo>
+    <record id="view_medical_patient_kanban" model="ir.ui.view">
+        <field name="name">medical.patient.kanban</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="display_name"/>
+                <field name="patient_number"/>
+                <field name="image_1920"/>
+                <field name="sex"/>
+                <field name="birthdate"/>
+                <field name="age"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex gap-3">
+                            <field name="image_1920"
+                                   widget="image"
+                                   class="oe_avatar"
+                                   style="width: 80px; height: 80px; object-fit: cover;"/>
+
+                            <div class="flex-grow-1">
+                                <strong>
+                                    <field name="display_name"/>
+                                </strong>
+
+                                <div>
+                                    <strong>Broj pacijenta: </strong>
+                                    <field name="patient_number"/>
+                                </div>
+                                <div>
+                                    <strong>Pol: </strong>
+                                    <field name="sex"/>
+                                </div>
+                                <div>
+                                    <strong>Datum rođenja: </strong>
+                                    <t t-if="record.birthdate.raw_value">
+                                        <t t-esc="record.birthdate.raw_value.slice(0, 10).split('-').reverse().join('.')"/>
+                                    </t>
+                                </div>
+                                <div>
+                                    <strong>Starost: </strong>
+                                    <field name="age"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_medical_patient_list" model="ir.ui.view">
         <field name="name">medical.patient.list</field>
         <field name="model">medical.patient</field>
@@ -12,30 +64,55 @@
         </field>
     </record>
 
+
     <record id="view_medical_patient_form" model="ir.ui.view">
         <field name="name">medical.patient.form</field>
         <field name="model">medical.patient</field>
         <field name="arch" type="xml">
             <form string="Karton pacijenta">
                 <sheet>
+                    <field name="partner_id" invisible="1"/>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <field name="image_1920"
+                            widget="image"
+                            class="oe_avatar"
+                            options="{'preview_image': 'image_1920'}"/>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+                    </div>
+
                     <group>
-                        <field name="patient_number"/>
-                        <field name="partner_id" invisible="1"/>
-                        <field name="active"/>
+                        <group string="Osnovni podaci">
+                            <field name="name"/>
+                            <field name="lastname"/>
+                            <field name="patient_number"/>
+                            <field name="jmbg"
+                                groups="geriatrics_19.group_patient_sensitive_data"/>
+                            <field name="birthdate"/>
+                            <field name="age" readonly="1"/>
+                            <field name="sex"/>
+                        </group>
+
+                        <group string="Kontakt i status">
+                            <field name="active"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="street"/>
+                            <field name="city"/>
+                        </group>
                     </group>
 
                     <notebook>
+
                         <page string="Lični podaci" name="personal_data">
-                            <group>
-                                <field name="name"/>
-                                <field name="lastname"/>
-                                <field name="jmbg"
-                                    groups="geriatrics_19.group_patient_sensitive_data"/>
+                            <group string="Dodatni lični podaci">
                                 <field name="id_number"
                                     groups="geriatrics_19.group_patient_sensitive_data"/>
-                                <field name="birthdate"/>
                                 <field name="birth_place"/>
-                                <field name="sex"/>
                             </group>
                         </page>
 
@@ -110,6 +187,29 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Aktivnosti i praćenje" name="patient_tracking">
+                            <group string="Aktivnosti pacijenta">
+                                <field name="activities_id"
+                                    widget="many2many_tags"
+                                    options="{'no_create': True, 'no_create_edit': True}"/>
+                            </group>
+
+                            <separator string="Evidencija rada s pacijentom"/>
+                            <field name="tracking_list_ids">
+                                <list string="Evidencija rada" default_order="date desc, id desc">
+                                    <field name="date"/>
+                                    <field name="info"/>
+                                    <field name="create_uid" string="Evidentirao" readonly="1"/>
+                                </list>
+                                <form string="Evidencija rada s pacijentom">
+                                    <group>
+                                        <field name="date"/>
+                                        <field name="info"/>
+                                        <field name="create_uid" string="Evidentirao" readonly="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
@@ -119,7 +219,7 @@
     <record id="action_medical_patient" model="ir.actions.act_window">
         <field name="name">Pacijenti</field>
         <field name="res_model">medical.patient</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
     </record>
 
 <menuitem
