@@ -5,3 +5,4 @@ from . import family_relation
 from . import patient_contract
 from . import patient_tracking
 from . import patient_activity
+from . import inpatient_registration

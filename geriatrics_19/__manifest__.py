@@ -11,6 +11,7 @@
         'data/relationship_types.xml',
         'views/patient_views.xml',
         'views/patient_contract_views.xml',
+        'views/inpatient_registration_views.xml',
         'views/partner_views.xml',
         'views/patient_activity_views.xml'
     ],
