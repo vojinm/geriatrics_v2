@@ -65,7 +65,7 @@
     <menuitem
         id="menu_medical_patient_contract"
         name="Ugovori"
-        parent="menu_geriatrics_root"
+        parent="menu_patient_administration"
         action="action_medical_patient_contract"
-        sequence="20"/>
+        sequence="30"/>
 </odoo>
