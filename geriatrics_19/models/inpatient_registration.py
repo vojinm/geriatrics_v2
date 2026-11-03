@@ -81,3 +81,11 @@ class InpatientRegistration(models.Model):
                 "state": "discharged",
                 "discharge_date": fields.Date.context_today(record),
             })
+
+    def unlink(self):
+        for record in self:
+            if record.state != "draft":
+                raise UserError(
+                    "Možete obrisati samo hospitalizaciju koja čeka prijem."
+                )
+        return super().unlink()
