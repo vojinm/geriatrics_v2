@@ -33,6 +33,10 @@ class InpatientRegistration(models.Model):
         string="Razlog otpusta",
     )
 
+    cancellation_reason = fields.Text(
+        string="Razlog otkazivanja",
+    )
+
     state = fields.Selection(
         [
             ("draft", "Čeka prijem"),
@@ -89,3 +93,17 @@ class InpatientRegistration(models.Model):
                     "Možete obrisati samo hospitalizaciju koja čeka prijem."
                 )
         return super().unlink()
+
+    def action_cancel(self):
+        for record in self:
+            if record.state != "draft":
+                raise UserError(
+                    "Možete otkazati samo hospitalizaciju koja čeka prijem."
+                )
+
+            if not record.cancellation_reason or not record.cancellation_reason.strip():
+                raise UserError(
+                    "Morate unijeti razlog otkazivanja prijema."
+                )
+
+            record.state = "cancelled"
