@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_patient_tracking_list" model="ir.ui.view">
+        <field name="name">medical.patient.tracking.list.view.list</field>
+        <field name="model">medical.patient.tracking.list</field>
+        <field name="arch" type="xml">
+            <list string="Tracking List" default_order="date desc, id desc">
+                <field name="date"/>
+                <field name="patient_id"/>
+                <field name="info"/>
+                <field name="create_uid" string="Evidentirao"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_patient_tracking_list" model="ir.actions.act_window">
+        <field name="name">Tracking List</field>
+        <field name="res_model">medical.patient.tracking.list</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_patient_tracking_list"
+        name="Praćenje aktivnosti"
+        parent="menu_patient_administration"
+        action="action_patient_tracking_list"
+        sequence="20"/>
+
+</odoo>
