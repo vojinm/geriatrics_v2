@@ -4,11 +4,18 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+
             <xpath expr="//field[@name='name']" position="after">
                 <field name="lastname"
                        string="Prezime"
                        invisible="is_company"/>
             </xpath>
+
+            <xpath expr="//form/sheet//field[@name='category_id']" position="after">
+                <field name="is_institution"
+                    string="Zdravstvena ustanova"/>
+            </xpath>
+
         </field>
     </record>
 </odoo>

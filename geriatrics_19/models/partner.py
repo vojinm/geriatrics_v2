@@ -51,6 +51,12 @@ class ResPartner(models.Model):
         index=True,
     )
 
+    is_institution = fields.Boolean(
+        string='Zdravstvena ustanova',
+        default=False,
+        help='Označava da partner predstavlja zdravstvenu ustanovu.',
+    )
+
     @api.depends('name', 'lastname', 'is_company')
     def _compute_display_name(self):
         super()._compute_display_name()
