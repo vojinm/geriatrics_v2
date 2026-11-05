@@ -1,0 +1,24 @@
+<odoo>
+    <record id="action_health_centers" model="ir.actions.act_window">
+        <field name="name">Zdravstveni centri</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_institution', '=', True)]</field>
+        <field name="context">
+            {'default_is_institution': True, 'default_is_company': True}
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_geriatrics_configuration"
+        name="Konfiguracija"
+        parent="menu_geriatrics_root"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_health_centers"
+        name="Zdravstveni centri"
+        parent="menu_geriatrics_configuration"
+        action="action_health_centers"
+        sequence="10"/>
+</odoo>

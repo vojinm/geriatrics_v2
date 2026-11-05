@@ -14,7 +14,8 @@
         'views/inpatient_registration_views.xml',
         'views/partner_views.xml',
         'views/patient_activity_views.xml',
-        'views/patient_tracking_views.xml'
+        'views/patient_tracking_views.xml',
+        'views/health_center_views.xml',
     ],
     'application': True,
     'installable': True,
