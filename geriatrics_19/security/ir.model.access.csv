@@ -7,3 +7,4 @@ access_medical_patient_contract_user,medical.patient.contract.user,model_medical
 access_medical_patient_tracking_user,medical.patient.tracking.list user,model_medical_patient_tracking_list,base.group_user,1,1,1,0
 access_medical_patient_activities_user,medical.patient.activities user,model_medical_patient_activities,base.group_user,1,1,1,0
 access_medical_inpatient_registration,medical.inpatient.registration,model_medical_inpatient_registration,base.group_user,1,1,1,1
+access_medical_insurance_user,medical.insurance.user,model_medical_insurance,base.group_user,1,1,1,0

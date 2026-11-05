@@ -1,0 +1,56 @@
+<odoo>
+    <record id="view_medical_insurance_list" model="ir.ui.view">
+        <field name="name">medical.insurance.list</field>
+        <field name="model">medical.insurance</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="company"/>
+                <field name="number"/>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="member_since"/>
+                <field name="member_exp"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_insurance_form" model="ir.ui.view">
+        <field name="name">medical.insurance.form</field>
+        <field name="model">medical.insurance</field>
+        <field name="arch" type="xml">
+            <form string="Osiguranje">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="number"/>
+                            <field name="company"/>
+                            <field name="type"/>
+                        </group>
+                        <group>
+                            <field name="category"/>
+                            <field name="member_since"/>
+                            <field name="member_exp"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_insurance" model="ir.actions.act_window">
+        <field name="name">Osiguranja</field>
+        <field name="res_model">medical.insurance</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_medical_insurance"
+        name="Osiguranja"
+        parent="menu_geriatrics_configuration"
+        action="action_medical_insurance"
+        sequence="20"/>
+</odoo>
