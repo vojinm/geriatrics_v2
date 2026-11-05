@@ -49,6 +49,73 @@ class InpatientRegistration(models.Model):
         required=True,
     )
 
+    def write(self, vals):
+        if "state" in vals:
+            allowed_transitions = {
+                "draft": {"hospitalized", "cancelled"},
+                "hospitalized": {"discharged"},
+                "discharged": set(),
+                "cancelled": set(),
+            }
+
+            for record in self:
+                new_state = vals["state"]
+
+                if new_state == record.state:
+                    continue
+
+                if new_state not in allowed_transitions.get(record.state, set()):
+                    raise UserError(
+                        "Nedozvoljena promjena statusa hospitalizacije: "
+                        f"{record.state} → {new_state}."
+                    )
+        if vals.get("state") == "cancelled":
+            for record in self:
+                reason = vals.get(
+                    "cancellation_reason", record.cancellation_reason
+                )
+                if not reason or not reason.strip():
+                    raise UserError(
+                        "Morate unijeti razlog otkazivanja prijema."
+                    )
+        if vals.get("state") == "discharged":
+            for record in self:
+                reason = vals.get(
+                    "discharge_reason", record.discharge_reason
+                )
+                if not reason or not reason.strip():
+                    raise UserError(
+                        "Morate unijeti razlog otpusta pacijenta."
+                    )
+        if "state" in vals or "patient_id" in vals:
+            active_patient_ids = []
+
+            for record in self:
+                new_state = vals.get("state", record.state)
+                patient_id = vals.get("patient_id", record.patient_id.id)
+
+                if new_state != "hospitalized":
+                    continue
+
+                if patient_id in active_patient_ids:
+                    raise UserError(
+                        "Pacijent ne može imati dvije aktivne hospitalizacije."
+                    )
+
+                active_patient_ids.append(patient_id)
+
+                existing = self.search([
+                    ("patient_id", "=", patient_id),
+                    ("state", "=", "hospitalized"),
+                    ("id", "not in", self.ids),
+                ], limit=1)
+
+                if existing:
+                    raise UserError(
+                        "Ovaj pacijent već ima aktivnu hospitalizaciju."
+                    )
+                return super().write(vals)
+
     def action_admit(self):
         for record in self:
             if record.state != "draft":
