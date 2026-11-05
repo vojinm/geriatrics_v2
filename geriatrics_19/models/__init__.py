@@ -7,3 +7,4 @@ from . import patient_tracking
 from . import patient_activity
 from . import inpatient_registration
 from . import medical_insurance
+from . import medical_misc

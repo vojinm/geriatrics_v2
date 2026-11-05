@@ -17,6 +17,7 @@
         'views/patient_tracking_views.xml',
         'views/health_center_views.xml',
         'views/medical_insurance_views.xml',
+        'views/medical_misc_views.xml',
     ],
     'application': True,
     'installable': True,

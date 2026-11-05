@@ -8,3 +8,9 @@ access_medical_patient_tracking_user,medical.patient.tracking.list user,model_me
 access_medical_patient_activities_user,medical.patient.activities user,model_medical_patient_activities,base.group_user,1,1,1,0
 access_medical_inpatient_registration,medical.inpatient.registration,model_medical_inpatient_registration,base.group_user,1,1,1,1
 access_medical_insurance_user,medical.insurance.user,model_medical_insurance,base.group_user,1,1,1,0
+access_inpatient_request_reason_user,inpatient.request.reason.user,model_medical_inpatient_request_reason,base.group_user,1,1,1,0
+access_patient_pension_type_user,patient.pension.type.user,model_medical_patient_pension_type,base.group_user,1,1,1,0
+access_patient_body_deformation_user,patient.body.deformation.user,model_medical_patient_body_deformation,base.group_user,1,1,1,0
+access_patient_mind_deformation_user,patient.mind.deformation.user,model_medical_patient_mind_deformation,base.group_user,1,1,1,0
+access_medical_ethnicity_user,medical.ethnicity.user,model_medical_ethnicity,base.group_user,1,1,1,0
+access_medical_occupation_user,medical.occupation.user,model_medical_occupation,base.group_user,1,1,1,0

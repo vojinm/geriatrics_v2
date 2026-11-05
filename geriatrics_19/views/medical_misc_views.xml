@@ -1,0 +1,241 @@
+<odoo>
+    <!-- Inpatient Request Reason -->
+    <record id="view_inpatient_request_reason_list" model="ir.ui.view">
+        <field name="name">medical.inpatient.request.reason.list</field>
+        <field name="model">medical.inpatient.request.reason</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="info"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_inpatient_request_reason_form" model="ir.ui.view">
+        <field name="name">medical.inpatient.request.reason.form</field>
+        <field name="model">medical.inpatient.request.reason</field>
+        <field name="arch" type="xml">
+            <form string="Razlog hospitalizacije">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="info"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_inpatient_request_reason" model="ir.actions.act_window">
+        <field name="name">Razlozi hospitalizacije</field>
+        <field name="res_model">medical.inpatient.request.reason</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Patient Pension Type -->
+    <record id="view_patient_pension_type_list" model="ir.ui.view">
+        <field name="name">medical.patient.pension.type.list</field>
+        <field name="model">medical.patient.pension.type</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="info"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_patient_pension_type_form" model="ir.ui.view">
+        <field name="name">medical.patient.pension.type.form</field>
+        <field name="model">medical.patient.pension.type</field>
+        <field name="arch" type="xml">
+            <form string="Vrsta penzije">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="info"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_patient_pension_type" model="ir.actions.act_window">
+        <field name="name">Vrste penzija</field>
+        <field name="res_model">medical.patient.pension.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Body Deformations -->
+    <record id="view_body_deformation_list" model="ir.ui.view">
+        <field name="name">medical.patient.body.deformation.list</field>
+        <field name="model">medical.patient.body.deformation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="info"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_body_deformation_form" model="ir.ui.view">
+        <field name="name">medical.patient.body.deformation.form</field>
+        <field name="model">medical.patient.body.deformation</field>
+        <field name="arch" type="xml">
+            <form string="Tjelesni deformitet">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="info"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_body_deformation" model="ir.actions.act_window">
+        <field name="name">Tjelesni deformiteti</field>
+        <field name="res_model">medical.patient.body.deformation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Mind Deformations -->
+    <record id="view_mind_deformation_list" model="ir.ui.view">
+        <field name="name">medical.patient.mind.deformation.list</field>
+        <field name="model">medical.patient.mind.deformation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="info"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mind_deformation_form" model="ir.ui.view">
+        <field name="name">medical.patient.mind.deformation.form</field>
+        <field name="model">medical.patient.mind.deformation</field>
+        <field name="arch" type="xml">
+            <form string="Mentalni deformitet">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="info"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mind_deformation" model="ir.actions.act_window">
+        <field name="name">Mentalni deformiteti</field>
+        <field name="res_model">medical.patient.mind.deformation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Ethnic Groups -->
+    <record id="view_medical_ethnicity_list" model="ir.ui.view">
+        <field name="name">medical.ethnicity.list</field>
+        <field name="model">medical.ethnicity</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_ethnicity_form" model="ir.ui.view">
+        <field name="name">medical.ethnicity.form</field>
+        <field name="model">medical.ethnicity</field>
+        <field name="arch" type="xml">
+            <form string="Etnička grupa">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_ethnicity" model="ir.actions.act_window">
+        <field name="name">Etnička grupa</field>
+        <field name="res_model">medical.ethnicity</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Occupations -->
+    <record id="view_medical_occupation_list" model="ir.ui.view">
+        <field name="name">medical.occupation.list</field>
+        <field name="model">medical.occupation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_occupation_form" model="ir.ui.view">
+        <field name="name">medical.occupation.form</field>
+        <field name="model">medical.occupation</field>
+        <field name="arch" type="xml">
+            <form string="Zanimanje">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_occupation" model="ir.actions.act_window">
+        <field name="name">Zanimanja</field>
+        <field name="res_model">medical.occupation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Misc menu -->
+    <menuitem id="menu_geriatrics_misc"
+              name="Razno"
+              parent="menu_geriatrics_configuration"
+              sequence="30"/>
+
+    <menuitem id="menu_inpatient_request_reason"
+              name="Razlozi hospitalizacije"
+              parent="menu_geriatrics_misc"
+              action="action_inpatient_request_reason"
+              sequence="10"/>
+
+    <menuitem id="menu_patient_pension_type"
+              name="Vrste penzija"
+              parent="menu_geriatrics_misc"
+              action="action_patient_pension_type"
+              sequence="20"/>
+
+    <menuitem id="menu_body_deformation"
+              name="Tjelesni deformiteti"
+              parent="menu_geriatrics_misc"
+              action="action_body_deformation"
+              sequence="30"/>
+
+    <menuitem id="menu_mind_deformation"
+              name="Mentalni deformiteti"
+              parent="menu_geriatrics_misc"
+              action="action_mind_deformation"
+              sequence="40"/>
+
+    <menuitem id="menu_medical_occupation"
+              name="Zanimanja"
+              parent="menu_geriatrics_misc"
+              action="action_medical_occupation"
+              sequence="50"/>
+
+    <menuitem id="menu_medical_ethnicity"
+              name="Etnička grupa"
+              parent="menu_geriatrics_misc"
+              action="action_medical_ethnicity"
+              sequence="60"/>
+</odoo>
