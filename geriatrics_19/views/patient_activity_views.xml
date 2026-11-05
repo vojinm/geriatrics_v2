@@ -33,7 +33,7 @@
         <menuitem
             id="menu_patient_activities"
             name="Aktivnosti pacijenata"
-            parent="geriatrics_19.menu_geriatrics_root"
+            parent="geriatrics_19.menu_geriatrics_configuration"
             action="action_open_patient_activity"
             sequence="20"/>
     </odoo>
