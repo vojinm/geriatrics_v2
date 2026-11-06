@@ -5,6 +5,81 @@ class MedicalPatient(models.Model):
     _name = 'medical.patient'
     _description = 'Pacijent'
 
+    inpatient_count = fields.Integer(
+        string='Hospitalizacije',
+        compute='_compute_inpatient_count',
+    )
+
+    def _compute_inpatient_count(self):
+        Inpatient = self.env['medical.inpatient.registration']
+        for patient in self:
+            patient.inpatient_count = Inpatient.search_count([
+                ('patient_id', '=', patient.id),
+            ])
+
+    def action_view_inpatient(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Hospitalizacija',
+            'res_model': 'medical.inpatient.registration',
+            'view_mode': 'list,form',
+            'domain': [('patient_id', '=', self.id)],
+            'context': {
+                'default_patient_id': self.id,
+            },
+        }
+
+    tracking_count = fields.Integer(
+        string='Praćenje aktivnosti',
+        compute='_compute_tracking_count',
+    )
+
+    def _compute_tracking_count(self):
+        Tracking = self.env['medical.patient.tracking.list']
+        for patient in self:
+            patient.tracking_count = Tracking.search_count([
+                ('patient_id', '=', patient.id),
+            ])
+
+    def action_view_tracking(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Praćenje aktivnosti',
+            'res_model': 'medical.patient.tracking.list',
+            'view_mode': 'list,form',
+            'domain': [('patient_id', '=', self.id)],
+            'context': {
+                'default_patient_id': self.id,
+            },
+        }
+
+    contract_count = fields.Integer(
+        string='Ugovori',
+        compute='_compute_contract_count',
+    )
+
+    def _compute_contract_count(self):
+        Contract = self.env['medical.patient.contract']
+        for patient in self:
+            patient.contract_count = Contract.search_count([
+                ('patient_id', '=', patient.id),
+            ])
+
+    def action_view_contracts(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Ugovori pacijenta',
+            'res_model': 'medical.patient.contract',
+            'view_mode': 'list,form',
+            'domain': [('patient_id', '=', self.id)],
+            'context': {
+                'default_patient_id': self.id,
+            },
+        }
+
     patient_number = fields.Char(
         string='Broj pacijenta',
         required=True,

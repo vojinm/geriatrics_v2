@@ -71,6 +71,39 @@
         <field name="arch" type="xml">
             <form string="Karton pacijenta">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_view_inpatient"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-hospital-o">
+                            <field
+                                name="inpatient_count"
+                                widget="statinfo"
+                                string="Hospitalizacija"/>
+                        </button>
+                        <button
+                            name="action_view_tracking"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-tasks">
+                            <field
+                                name="tracking_count"
+                                widget="statinfo"
+                                string="Praćenje aktivnosti"/>
+                        </button>
+                        <button
+                            name="action_view_contracts"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o">
+                            <field
+                                name="contract_count"
+                                widget="statinfo"
+                                string="Ugovori"/>
+                        </button>
+                    </div>
+
                     <field name="partner_id" invisible="1"/>
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <field name="image_1920"
