@@ -265,6 +265,11 @@ class MedicalPatient(models.Model):
         default=False,
     )
 
+    pension_type = fields.Many2one(
+        'medical.patient.pension.type',
+        string='Vrsta penzije',
+    )
+
     pension_unique_no = fields.Char(
         string='Broj penzije',
     )
