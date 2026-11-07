@@ -242,6 +242,36 @@ class MedicalPatient(models.Model):
         string='Datum i vrijeme smrti',
     )
 
+    education = fields.Selection(
+        [
+            ('0', 'Bez obrazovanja'),
+            ('1', 'Nepotpuna osnovna škola'),
+            ('2', 'Osnovna škola'),
+            ('3', 'Nepotpuna srednja škola'),
+            ('4', 'Srednja škola'),
+            ('5', 'Viša škola'),
+            ('6', 'Fakultet'),
+        ],
+        string='Stepen obrazovanja',
+    )
+
+    is_pensioner = fields.Boolean(
+        string='Penzioner',
+        default=False,
+    )
+
+    pension_unique_no = fields.Char(
+        string='Broj penzije',
+    )
+
+    property_owned = fields.Text(
+        string='Imovina u vlasništvu',
+    )
+
+    ses_notes = fields.Text(
+        string='Dodatne socioekonomske informacije',
+    )
+
     sex = fields.Selection(
         related='partner_id.sex',
         string='Pol',

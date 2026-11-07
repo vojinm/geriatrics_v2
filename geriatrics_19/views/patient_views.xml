@@ -199,6 +199,27 @@
 
                         </page>
 
+                        <page string="Socioekonomski podaci" name="socioeconomic_data">
+
+                            <group>
+                                <group string="Obrazovanje i penzija">
+                                    <field name="education"/>
+                                    <field name="is_pensioner"/>
+                                    <field name="pension_unique_no"
+                                           invisible="not is_pensioner"/>
+                                </group>
+                            </group>
+
+                            <group string="Imovina">
+                                <field name="property_owned" nolabel="1"/>
+                            </group>
+
+                            <group string="Dodatne informacije">
+                                <field name="ses_notes" nolabel="1"/>
+                            </group>
+
+                        </page>
+
                         <page string="Kontakt i adresa" name="contact_data">
                             <group>
                                 <field name="phone"/>
