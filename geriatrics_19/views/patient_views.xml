@@ -142,11 +142,30 @@
                     <notebook>
 
                         <page string="Lični podaci" name="personal_data">
-                            <group string="Dodatni lični podaci">
+
+                            <group>
+                                <group string="Rođenje">
+                                    <field name="birth_place"/>
+                                    <field name="birth_municipalities"/>
+                                    <field name="birth_country_id"/>
+                                </group>
+
+                                <group string="Porodični podaci">
+                                    <field name="maiden_name"/>
+                                    <field name="father_name"/>
+                                    <field name="mother_name"/>
+                                    <field name="mother_surname"/>
+                                    <field name="husband_name"/>
+                                </group>
+                            </group>
+
+                            <group string="Lični dokument">
                                 <field name="id_number"
                                     groups="geriatrics_19.group_patient_sensitive_data"/>
-                                <field name="birth_place"/>
+                                <field name="id_expiration_date"
+                                    groups="geriatrics_19.group_patient_sensitive_data"/>
                             </group>
+
                         </page>
 
                         <page string="Kontakt i adresa" name="contact_data">

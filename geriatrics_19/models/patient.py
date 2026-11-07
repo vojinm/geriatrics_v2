@@ -163,6 +163,39 @@ class MedicalPatient(models.Model):
         readonly=False,
     )
 
+    birth_municipalities = fields.Char(
+        string='Opština rođenja',
+    )
+
+    birth_country_id = fields.Many2one(
+        'res.country',
+        string='Država rođenja',
+    )
+
+    maiden_name = fields.Char(
+        string='Djevojačko prezime',
+    )
+
+    father_name = fields.Char(
+        string='Ime oca',
+    )
+
+    mother_name = fields.Char(
+        string='Ime majke',
+    )
+
+    mother_surname = fields.Char(
+        string='Prezime majke',
+    )
+
+    husband_name = fields.Char(
+        string='Ime supružnika',
+    )
+
+    id_expiration_date = fields.Date(
+        string='Datum isteka lične karte',
+    )
+
     sex = fields.Selection(
         related='partner_id.sex',
         string='Pol',
