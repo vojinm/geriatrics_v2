@@ -204,6 +204,7 @@
                             <group>
                                 <group string="Obrazovanje i penzija">
                                     <field name="education"/>
+                                    <field name="occupation"/>
                                     <field name="is_pensioner"/>
                                     <field name="pension_unique_no"
                                            invisible="not is_pensioner"/>

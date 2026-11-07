@@ -255,6 +255,11 @@ class MedicalPatient(models.Model):
         string='Stepen obrazovanja',
     )
 
+    occupation = fields.Many2one(
+        'medical.occupation',
+        string='Zanimanje',
+    )
+
     is_pensioner = fields.Boolean(
         string='Penzioner',
         default=False,
