@@ -274,6 +274,13 @@ class MedicalPatient(models.Model):
         string='Broj penzije',
     )
 
+    insured_via = fields.One2many(
+        'medical.insurance',
+        string='Osiguranje',
+        related='partner_id.insurance',
+        readonly=False,
+    )
+
     property_owned = fields.Text(
         string='Imovina u vlasništvu',
     )

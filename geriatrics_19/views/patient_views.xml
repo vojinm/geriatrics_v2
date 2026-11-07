@@ -213,6 +213,20 @@
                                 </group>
                             </group>
 
+                            <separator string="Osiguranje" colspan="2"/>
+                            <group col="1" colspan="2">
+                                <field name="insured_via" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="number"/>
+                                        <field name="name" column_invisible="True"/>
+                                        <field name="type"/>
+                                        <field name="company"/>
+                                        <field name="member_since"/>
+                                        <field name="member_exp"/>
+                                    </list>
+                                </field>
+                            </group>
+
                             <group string="Imovina">
                                 <field name="property_owned" nolabel="1"/>
                             </group>

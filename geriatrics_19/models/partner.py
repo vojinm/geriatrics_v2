@@ -17,6 +17,12 @@ class ResPartner(models.Model):
         string='Pacijent',
     )
 
+    insurance = fields.One2many(
+        'medical.insurance',
+        'name',
+        string='Osiguranja',
+    )
+
     family_relation_ids = fields.One2many(
         'geriatrics.family.relation',
         'partner_id',
