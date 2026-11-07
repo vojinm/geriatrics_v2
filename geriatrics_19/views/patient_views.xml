@@ -141,6 +141,37 @@
 
                     <notebook>
 
+                        <page string="Opšte informacije" name="general_information">
+
+                            <group>
+                                <group string="Lični i zdravstveni podaci">
+                                    <field name="marital_status"/>
+                                    <field name="blood_type"/>
+                                    <field name="rh"/>
+                                </group>
+
+                                <group string="Status pacijenta">
+                                    <field name="deceased"/>
+                                    <field name="dod" invisible="not deceased"/>
+                                </group>
+                            </group>
+
+                            <group string="Važne medicinske informacije">
+                                <field name="critical_info"
+                                    nolabel="1"
+                                    placeholder="Važne bolesti, alergije, operacije i druge medicinske informacije..."
+                                    colspan="2"/>
+                            </group>
+
+                            <group string="Dodatne informacije">
+                                <field name="general_info"
+                                    nolabel="1"
+                                    placeholder="Opšte informacije o pacijentu..."
+                                    colspan="2"/>
+                            </group>
+
+                        </page>
+
                         <page string="Lični podaci" name="personal_data">
 
                             <group>

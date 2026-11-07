@@ -196,6 +196,52 @@ class MedicalPatient(models.Model):
         string='Datum isteka lične karte',
     )
 
+    marital_status = fields.Selection(
+        [
+            ('s', 'Neoženjen/neudata'),
+            ('m', 'U braku'),
+            ('w', 'Udovac/udovica'),
+            ('d', 'Razveden/a'),
+            ('x', 'Rastavljen/a'),
+        ],
+        string='Bračno stanje',
+    )
+
+    blood_type = fields.Selection(
+        [
+            ('A', 'A'),
+            ('B', 'B'),
+            ('AB', 'AB'),
+            ('O', 'O'),
+        ],
+        string='Krvna grupa',
+    )
+
+    rh = fields.Selection(
+        [
+            ('+', '+'),
+            ('-', '-'),
+        ],
+        string='Rh faktor',
+    )
+
+    critical_info = fields.Text(
+        string='Važne medicinske informacije',
+    )
+
+    general_info = fields.Text(
+        string='Opšte informacije',
+    )
+
+    deceased = fields.Boolean(
+        string='Preminuo/-la',
+        default=False,
+    )
+
+    dod = fields.Datetime(
+        string='Datum i vrijeme smrti',
+    )
+
     sex = fields.Selection(
         related='partner_id.sex',
         string='Pol',
