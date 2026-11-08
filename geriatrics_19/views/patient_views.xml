@@ -148,6 +148,8 @@
                                     <field name="marital_status"/>
                                     <field name="blood_type"/>
                                     <field name="rh"/>
+                                    <field name="body_deformation_ids" widget="many2many_tags"/>
+                                    <field name="mind_deformation_ids" widget="many2many_tags"/>
                                 </group>
 
                                 <group string="Status pacijenta">

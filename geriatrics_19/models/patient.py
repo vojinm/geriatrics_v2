@@ -225,6 +225,16 @@ class MedicalPatient(models.Model):
         string='Rh faktor',
     )
 
+    body_deformation_ids = fields.Many2many(
+        'medical.patient.body.deformation',
+        string='Tjelesni deformiteti',
+    )
+
+    mind_deformation_ids = fields.Many2many(
+        'medical.patient.mind.deformation',
+        string='Mentalni deformiteti',
+    )
+
     critical_info = fields.Text(
         string='Važne medicinske informacije',
     )
