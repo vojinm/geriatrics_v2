@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="geriatrics_19.PatientPrintMenu"
+       t-inherit="web.FormCogMenu"
+       t-inherit-mode="extension">
+
+        <xpath expr="//div[hasclass('o_cp_action_menus')]/div[1]" position="before">
+
+            <div t-if="props.resModel === 'medical.patient' and props.items.print?.length"
+                 class="d-inline-block">
+
+                <Dropdown beforeOpen.bind="loadPrintItems">
+                    <button class="btn btn-secondary">
+                        <i class="fa fa-print me-1"/>
+                        Print
+                    </button>
+
+                    <t t-set-slot="content">
+                        <DropdownItem
+                            t-foreach="state.printItems"
+                            t-as="item"
+                            t-key="item.key"
+                            onSelected="() => this.onItemSelected(item)">
+                            <t t-esc="item.description"/>
+                        </DropdownItem>
+                    </t>
+                </Dropdown>
+
+            </div>
+
+        </xpath>
+
+        <xpath expr="//t[@t-if='state.printItems.length']"
+            position="attributes">
+            <attribute name="t-if">
+                props.resModel !== 'medical.patient' and state.printItems.length
+            </attribute>
+        </xpath>
+        <xpath expr="//button[@aria-label='Actions menu']" position="inside">
+            <span t-if="props.resModel === 'medical.patient'"
+                class="ms-1">
+                Actions
+            </span>
+        </xpath>
+    </t>
+
+</templates>

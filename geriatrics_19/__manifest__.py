@@ -18,7 +18,14 @@
         'views/health_center_views.xml',
         'views/medical_insurance_views.xml',
         'views/medical_misc_views.xml',
+        'reports/patient_card_template.xml',
+        'reports/patient_card_report.xml',
     ],
+    "assets": {
+            "web.assets_backend": [
+                'geriatrics_19/static/src/xml/patient_print_menu.xml',
+            ],
+    },
     'application': True,
     'installable': True,
     'license': 'LGPL-3',

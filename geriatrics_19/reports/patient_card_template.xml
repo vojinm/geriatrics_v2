@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_patient_card">
+        <t t-call="web.html_container">
+
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+
+                    <div class="page">
+
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <img t-if="o.image_1920"
+                                    t-att-src="image_data_uri(o.image_1920)"
+                                    style="max-height: 140px; max-width: 120px;"/>
+                            </div>
+                            <div class="col-9">
+                                <h2 class="text-center">
+                                    LIČNI KARTON KORISNIKA
+                                </h2>
+                            </div>
+                        </div>
+
+                        <h3 class="text-center">
+                            <span t-field="o.name"/>
+                            <span t-field="o.lastname"/>
+                        </h3>
+
+                        <table class="table table-sm table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Broj pacijenta:</strong></td>
+                                    <td><span t-field="o.patient_number"/></td>
+                                </tr>
+                                <t t-set="first_admission"
+                                    t-value="o.env['medical.inpatient.registration'].search([
+                                        ('patient_id', '=', o.id),
+                                        ('state', 'in', ['hospitalized', 'discharged']),
+                                        ('hospitalization_date', '!=', False)
+                                    ], order='hospitalization_date asc, id asc', limit=1)"/>
+
+                                <tr>
+                                    <td><strong>Datum prvog prijema:</strong></td>
+                                    <td>
+                                        <span t-if="first_admission"
+                                            t-field="first_admission.hospitalization_date"
+                                            t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height: 24px; padding: 0;"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ime oca:</strong></td>
+                                    <td><span t-field="o.father_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ime majke:</strong></td>
+                                    <td><span t-field="o.mother_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Djevojačko prezime majke:</strong></td>
+                                    <td><span t-field="o.mother_surname"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pol:</strong></td>
+                                    <td>
+                                        <span t-if="o.sex == 'm'">Muški</span>
+                                        <span t-if="o.sex == 'f'">Ženski</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bračno stanje:</strong></td>
+                                    <td><span t-field="o.marital_status"/></td>
+                                </tr>
+                                <tr t-if="o.sex == 'f'">
+                                    <td><strong>Djevojačko prezime:</strong></td>
+                                    <td><span t-field="o.maiden_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ime supružnika:</strong></td>
+                                    <td><span t-field="o.husband_name"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height: 12px; padding: 0;"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>JMBG:</strong></td>
+                                    <td><span t-field="o.jmbg"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Datum rođenja:</strong></td>
+                                    <td>
+                                        <span t-field="o.birthdate"
+                                              t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mjesto rođenja:</strong></td>
+                                    <td><span t-field="o.birth_place"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Opština rođenja:</strong></td>
+                                    <td><span t-field="o.birth_municipalities"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Država rođenja:</strong></td>
+                                    <td><span t-field="o.birth_country_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Posljednja adresa stanovanja:</strong></td>
+                                    <td>
+                                        <span t-field="o.street"/>
+                                        <span t-if="o.street2">, <span t-field="o.street2"/></span>
+                                        <span t-if="o.city">, <span t-field="o.city"/></span>
+                                        <span t-if="o.zip">, <span t-field="o.zip"/></span>
+                                        <span t-if="o.country_id">, <span t-field="o.country_id"/></span>
+                                    </td>
+                                </tr>
+                                <t t-set="contract"
+                                t-value="o.contract_ids.filtered(lambda c: c.state == 'open')[:1] or o.contract_ids.sorted(key=lambda c: (c.date_start or '0001-01-01', c.id), reverse=True)[:1]"/>
+
+                                <tr>
+                                    <td><strong>Zahtjev za ugovor:</strong></td>
+                                    <td>
+                                        <span t-if="contract"
+                                            t-field="contract.requester_id"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ugovarač:</strong></td>
+                                    <td>
+                                        <span t-if="contract"
+                                            t-field="contract.contractor_id"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height: 12px; padding: 0;"></td>
+                                </tr>
+                                    <td colspan="2" style="height: 12px; padding: 0;"></td>
+                                <tr>
+                                    <td><strong>Penzioner:</strong></td>
+                                    <td>
+                                        <span t-if="o.is_pensioner">Da</span>
+                                        <span t-else="">Ne</span>
+                                    </td>
+                                </tr>
+                            <tr>
+                                <td><strong>Vrsta penzije:</strong></td>
+                                <td><span t-field="o.pension_type"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Matični broj penzije:</strong></td>
+                                <td><span t-field="o.pension_unique_no"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Zanimanje:</strong></td>
+                                <td><span t-field="o.occupation"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Imovinske prilike:</strong></td>
+                                <td><span t-field="o.property_owned"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="height: 12px; padding: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Zdravstveno osiguran preko:</strong></td>
+                                <td>
+                                    <t t-foreach="o.insured_via" t-as="insurance">
+                                        <span t-if="insurance.company"
+                                            t-field="insurance.company"/>
+                                        <span t-if="not insurance_last">, </span>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bliža rodbina korisnika:</strong></td>
+                                <td>
+                                    <t t-foreach="o.family_relation_ids" t-as="relation">
+                                        <div>
+                                            <span t-field="relation.family_partner_id"/>
+
+                                            <t t-if="relation.relationship_type_id">
+                                                (<span t-field="relation.relationship_type_id"/>)
+                                            </t>
+
+                                            <t t-if="relation.phone">
+                                                — <span t-field="relation.phone"/>
+                                            </t>
+
+                                            <t t-if="relation.mobile">
+                                                / <span t-field="relation.mobile"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tjelesni deformiteti:</strong></td>
+                                <td>
+                                    <t t-foreach="o.body_deformation_ids" t-as="deformation">
+                                        <span t-esc="deformation.display_name"/>
+                                        <span t-if="not deformation_last">, </span>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mentalni deformiteti:</strong></td>
+                                <td>
+                                    <t t-foreach="o.mind_deformation_ids" t-as="deformation">
+                                        <span t-esc="deformation.display_name"/>
+                                        <span t-if="not deformation_last">, </span>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kritične informacije:</strong></td>
+                                <td>
+                                    <span t-field="o.critical_info"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Opšte informacije:</strong></td>
+                                <td>
+                                    <span t-field="o.general_info"/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.deceased" style="border-bottom: 12px solid transparent;">
+                                <td><strong>Datum smrti:</strong></td>
+                                <td>
+                                    <span t-field="o.dod"
+                                        t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </t>
+            </t>
+
+        </t>
+    </template>
+
+</odoo>
