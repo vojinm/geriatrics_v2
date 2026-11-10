@@ -20,6 +20,8 @@
         'views/medical_misc_views.xml',
         'reports/patient_card_template.xml',
         'reports/patient_card_report.xml',
+        'reports/patient_tracking_template.xml',
+        'reports/patient_tracking_report.xml',
     ],
     "assets": {
             "web.assets_backend": [

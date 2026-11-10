@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_patient_tracking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <h2 style="text-align: center;">
+                            LIST PRAĆENJA
+                        </h2>
+
+                        <h3 style="text-align: center;">
+                            <span t-field="o.display_name"/>
+                            <br/>
+                            <span t-field="o.patient_number"/>
+                        </h3>
+
+                        <table class="table table-sm"
+                               style="width: 100%; margin-top: 30px;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">Datum</th>
+                                    <th style="width: 55%;">Obavljena aktivnost</th>
+                                    <th style="width: 25%;">Razgovor obavio</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr t-foreach="o.tracking_list_ids.sorted('date')" t-as="entry">
+                                    <td>
+                                        <span t-field="entry.date"
+                                              t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                                    </td>
+                                    <td>
+                                        <span t-field="entry.info"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="entry.create_uid.name"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="text-align: right; margin-top: 40px;">
+                            ____________________<br/>
+                            (potpis)
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
