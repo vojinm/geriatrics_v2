@@ -5,6 +5,27 @@ class MedicalPatient(models.Model):
     _name = 'medical.patient'
     _description = 'Pacijent'
 
+    hospitalization_unit_id = fields.Many2one(
+        'medical.hospital.unit',
+        string='Aktuelni odjel',
+        compute='_compute_hospitalization_unit',
+    )
+
+    def _compute_hospitalization_unit(self):
+        Inpatient = self.env['medical.inpatient.registration']
+
+        for patient in self:
+            hospitalization = Inpatient.search([
+                ('patient_id', '=', patient.id),
+                ('state', '=', 'hospitalized'),
+            ], limit=1)
+
+            patient.hospitalization_unit_id = (
+                hospitalization.medical_hospital_unit_id
+                if hospitalization
+                else False
+            )
+
     inpatient_count = fields.Integer(
         string='Hospitalizacije',
         compute='_compute_inpatient_count',

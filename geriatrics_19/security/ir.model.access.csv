@@ -14,3 +14,4 @@ access_patient_body_deformation_user,patient.body.deformation.user,model_medical
 access_patient_mind_deformation_user,patient.mind.deformation.user,model_medical_patient_mind_deformation,base.group_user,1,1,1,0
 access_medical_ethnicity_user,medical.ethnicity.user,model_medical_ethnicity,base.group_user,1,1,1,0
 access_medical_occupation_user,medical.occupation.user,model_medical_occupation,base.group_user,1,1,1,0
+access_medical_hospital_unit_user,medical.hospital.unit user,model_medical_hospital_unit,base.group_user,1,1,1,0

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_patient_protection_plan_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <h2 style="text-align: center;">PLAN ZAŠTITE</h2>
+
+                        <h3 style="text-align: center;">
+                            <span t-field="o.display_name"/>
+                        </h3>
+
+                        <p>
+                            <strong>Datum:</strong>
+                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d.%m.%Y.')"/>
+                        </p>
+
+                        <p>
+                            <strong>Odjel na kojem je smješten korisnik:</strong>
+                            <span style="margin-left: 5px;" t-field="o.hospitalization_unit_id"/>
+                        </p>
+
+                        <br/>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>1. Opšta ocjena trenutnog nivoa funkcionisanja:</strong>
+                            </p>
+                            <p t-field="o.current_functioning"/>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>2. Pomoć u adaptaciji:</strong>
+                            </p>
+                            <p t-field="o.adaptation_help"/>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>3. Plan rada sa porodicom i bližim srodnicima:</strong>
+                            </p>
+                            <p t-field="o.family_plan"/>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>4. Plan korištenja slobodnog vremena:</strong>
+                            </p>
+                            <p t-field="o.freetime_plan"/>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>5. Kratkoročni ciljevi rada sa korisnikom:</strong>
+                            </p>
+                            <p t-field="o.short_goals"/>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="margin-bottom: 6px;">
+                                <strong>6. Dugoročni ciljevi rada sa korisnikom:</strong>
+                            </p>
+                            <p t-field="o.long_goals"/>
+                        </div>
+
+                        <div style="margin-top: 45px; text-align: right;">
+                            <div style="display: inline-block; text-align: center;">
+                                ___________________<br/>
+                                Socijalni radnik
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

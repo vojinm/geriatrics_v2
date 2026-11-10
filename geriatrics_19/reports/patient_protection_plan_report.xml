@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_patient_protection_plan" model="ir.actions.report">
+        <field name="name">Plan zaštite</field>
+        <field name="model">medical.patient</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">geriatrics_19.report_patient_protection_plan_document</field>
+        <field name="report_file">geriatrics_19.report_patient_protection_plan_document</field>
+        <field name="binding_model_id" ref="model_medical_patient"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Plan zaštite - %s' % (object.display_name)</field>
+    </record>
+</odoo>

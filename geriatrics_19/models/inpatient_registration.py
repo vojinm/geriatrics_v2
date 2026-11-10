@@ -19,6 +19,12 @@ class InpatientRegistration(models.Model):
         ondelete="restrict",
     )
 
+    medical_hospital_unit_id = fields.Many2one(
+        'medical.hospital.unit',
+        string='Odjel smještaja',
+        ondelete='restrict',
+    )
+
     hospitalization_date = fields.Date(
         string="Datum prijema",
         default=fields.Date.context_today,
@@ -114,7 +120,8 @@ class InpatientRegistration(models.Model):
                     raise UserError(
                         "Ovaj pacijent već ima aktivnu hospitalizaciju."
                     )
-                return super().write(vals)
+
+        return super().write(vals)
 
     def action_admit(self):
         for record in self:

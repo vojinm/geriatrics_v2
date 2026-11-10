@@ -46,6 +46,7 @@
                     <group>
                         <field name="name"/>
                         <field name="patient_id"/>
+                        <field name="medical_hospital_unit_id"/>
                         <field name="hospitalization_date"/>
                         <field name="discharge_date"/>
                         <field name="discharge_reason"
