@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -22,6 +22,12 @@ class InpatientRegistration(models.Model):
     medical_hospital_unit_id = fields.Many2one(
         'medical.hospital.unit',
         string='Odjel smještaja',
+        ondelete='restrict',
+    )
+
+    bed_id = fields.Many2one(
+        'medical.hospital.bed',
+        string='Krevet',
         ondelete='restrict',
     )
 
@@ -55,7 +61,45 @@ class InpatientRegistration(models.Model):
         required=True,
     )
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("state") == "hospitalized":
+                raise UserError(
+                    "Nova hospitalizacija mora prvo imati status "
+                    "'Čeka prijem'. Koristite dugme za prijem pacijenta."
+                )
+
+            bed_id = vals.get("bed_id")
+            unit_id = vals.get("medical_hospital_unit_id")
+
+            if bed_id:
+                if not unit_id:
+                    raise UserError(
+                        "Morate izabrati odjel smještaja "
+                        "kada je dodijeljen krevet."
+                    )
+
+                bed = self.env["medical.hospital.bed"].browse(bed_id)
+
+                if bed.ward_id.unit_id.id != unit_id:
+                    raise UserError(
+                        "Odabrani krevet ne pripada odjelu smještaja."
+                    )
+
+        return super().create(vals_list)
+
     def write(self, vals):
+        if "bed_id" in vals and not vals["bed_id"]:
+            for record in self:
+                new_state = vals.get("state", record.state)
+
+                if new_state == "hospitalized":
+                    raise UserError(
+                        "Ne možete ukloniti krevet iz aktivne "
+                        "hospitalizacije. Izaberite drugi krevet "
+                        "ili prvo otpustite pacijenta."
+                    )
         if "state" in vals:
             allowed_transitions = {
                 "draft": {"hospitalized", "cancelled"},
@@ -121,7 +165,130 @@ class InpatientRegistration(models.Model):
                         "Ovaj pacijent već ima aktivnu hospitalizaciju."
                     )
 
-        return super().write(vals)
+        if (
+            vals.get("state") == "hospitalized"
+            or (
+                "bed_id" in vals
+                and vals.get("state") not in ("discharged", "cancelled")
+            )
+        ):
+            active_bed_ids = []
+
+            for record in self:
+                new_state = vals.get("state", record.state)
+                bed_id = vals.get(
+                    "bed_id",
+                    record.bed_id.id,
+                )
+
+                if new_state != "hospitalized" or not bed_id:
+                    continue
+
+                if bed_id in active_bed_ids:
+                    raise UserError(
+                        "Isti krevet ne može biti dodijeljen "
+                        "dvjema aktivnim hospitalizacijama."
+                    )
+
+                active_bed_ids.append(bed_id)
+
+                existing = self.search([
+                    ("bed_id", "=", bed_id),
+                    ("state", "=", "hospitalized"),
+                    ("id", "not in", self.ids),
+                ], limit=1)
+
+                if existing:
+                    raise UserError(
+                        "Odabrani krevet već koristi "
+                        "drugi hospitalizovani pacijent."
+                    )
+
+
+                bed = self.env["medical.hospital.bed"].browse(bed_id)
+
+                if bed.state in ("reserved", "na"):
+                    raise UserError(
+                        f"Krevet '{bed.name}' nije dostupan "
+                        "za hospitalizaciju."
+                    )
+
+                if bed.state == "occupied":
+                    if record.bed_id.id != bed_id:
+                        raise UserError(
+                            f"Krevet '{bed.name}' je već zauzet."
+                        )
+
+                    if record.state != "hospitalized":
+                        raise UserError(
+                            f"Krevet '{bed.name}' je već zauzet."
+                        )
+
+        if (
+            "bed_id" in vals
+            or "medical_hospital_unit_id" in vals
+            or vals.get("state") == "hospitalized"
+        ):
+            for record in self:
+                bed_id = vals.get("bed_id", record.bed_id.id)
+                unit_id = vals.get(
+                    "medical_hospital_unit_id",
+                    record.medical_hospital_unit_id.id,
+                )
+
+                if not bed_id:
+                    continue
+
+                if not unit_id:
+                    raise UserError(
+                        "Morate izabrati odjel smještaja "
+                        "kada je dodijeljen krevet."
+                    )
+
+                bed = self.env["medical.hospital.bed"].browse(bed_id)
+
+                if bed.ward_id.unit_id.id != unit_id:
+                    raise UserError(
+                        "Odabrani krevet ne pripada odjelu smještaja."
+                    )
+
+        previous_beds = {
+            record.id: (
+                record.bed_id,
+                record.state,
+            )
+            for record in self
+        }
+
+        result = super().write(vals)
+
+        if "state" in vals or "bed_id" in vals:
+            for record in self:
+                old_bed, old_state = previous_beds[record.id]
+                new_bed = record.bed_id
+
+                if (
+                    old_state == "hospitalized"
+                    and old_bed
+                    and (
+                        record.state != "hospitalized"
+                        or old_bed != new_bed
+                    )
+                ):
+
+                    old_bed.state = "free"
+
+                if (
+                    record.state == "hospitalized"
+                    and new_bed
+                    and (
+                        old_state != "hospitalized"
+                        or old_bed != new_bed
+                    )
+                ):
+                    new_bed.state = "occupied"
+
+        return result
 
     def action_admit(self):
         for record in self:

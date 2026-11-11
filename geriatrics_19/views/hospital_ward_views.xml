@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_medical_hospital_ward_list" model="ir.ui.view">
+        <field name="name">medical.hospital.ward.list</field>
+        <field name="model">medical.hospital.ward</field>
+        <field name="arch" type="xml">
+            <list string="Sobe">
+                <field name="name"/>
+                <field name="building_id"/>
+                <field name="unit_id"/>
+                <field name="floor"/>
+                <field name="number_of_beds"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_hospital_ward_form" model="ir.ui.view">
+        <field name="name">medical.hospital.ward.form</field>
+        <field name="model">medical.hospital.ward</field>
+        <field name="arch" type="xml">
+            <form string="Soba">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="institution_id"/>
+                            <field name="building_id"/>
+                            <field name="unit_id"/>
+                            <field name="floor"/>
+                        </group>
+                        <group>
+                            <field name="number_of_beds"/>
+                            <field name="gender"/>
+                            <field name="state"/>
+                            <field name="private"/>
+                            <field name="bio_hazard"/>
+                        </group>
+                    </group>
+
+                    <group string="Oprema sobe" col="4">
+                        <field name="telephone"/>
+                        <field name="ac"/>
+                        <field name="private_bathroom"/>
+                        <field name="guest_sofa"/>
+                        <field name="tv"/>
+                        <field name="internet"/>
+                        <field name="refrigerator"/>
+                        <field name="microwave"/>
+                    </group>
+
+                    <group string="Dodatne informacije">
+                        <field name="extra_info" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_hospital_ward" model="ir.actions.act_window">
+        <field name="name">Sobe</field>
+        <field name="res_model">medical.hospital.ward</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_medical_hospital_ward"
+              name="Sobe"
+              parent="menu_health_centers"
+              action="action_medical_hospital_ward"
+              sequence="40"/>
+</odoo>

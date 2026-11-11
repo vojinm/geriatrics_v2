@@ -9,3 +9,6 @@ from . import inpatient_registration
 from . import medical_insurance
 from . import medical_misc
 from . import hospital_unit
+from . import hospital_building
+from . import hospital_ward
+from . import hospital_bed

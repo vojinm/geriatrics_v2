@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_medical_hospital_bed_list" model="ir.ui.view">
+        <field name="name">medical.hospital.bed.list</field>
+        <field name="model">medical.hospital.bed</field>
+        <field name="arch" type="xml">
+            <list string="Kreveti">
+                <field name="name"/>
+                <field name="ward_id"/>
+                <field name="bed_type"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_hospital_bed_form" model="ir.ui.view">
+        <field name="name">medical.hospital.bed.form</field>
+        <field name="model">medical.hospital.bed</field>
+        <field name="arch" type="xml">
+            <form string="Krevet">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="ward_id"/>
+                            <field name="bed_type"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="telephone_number"/>
+                        </group>
+                    </group>
+
+                    <group string="Dodatne informacije">
+                        <field name="extra_info" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_hospital_bed" model="ir.actions.act_window">
+        <field name="name">Kreveti</field>
+        <field name="res_model">medical.hospital.bed</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_medical_hospital_bed"
+              name="Kreveti"
+              parent="menu_health_centers"
+              action="action_medical_hospital_bed"
+              sequence="50"/>
+</odoo>

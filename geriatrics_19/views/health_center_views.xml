@@ -19,6 +19,12 @@
         id="menu_health_centers"
         name="Zdravstveni centri"
         parent="menu_geriatrics_configuration"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_health_center_institutions"
+        name="Ustanove"
+        parent="menu_health_centers"
         action="action_health_centers"
         sequence="10"/>
 </odoo>
