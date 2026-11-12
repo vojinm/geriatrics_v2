@@ -3,7 +3,7 @@
     <template id="report_patient_tracking">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
+                <t t-call="web.basic_layout">
                     <div class="page">
 
                         <h2 style="text-align: center;">
@@ -16,35 +16,42 @@
                             <span t-field="o.patient_number"/>
                         </h3>
 
-                        <table class="table table-sm"
-                               style="width: 100%; margin-top: 30px;">
+                        <table style="width: 100%; margin-top: 30px; border-collapse: collapse; table-layout: fixed;">
+                            <colgroup>
+                                <col style="width: 20%;"/>
+                                <col style="width: 55%;"/>
+                                <col style="width: 25%;"/>
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th style="width: 20%;">Datum</th>
-                                    <th style="width: 55%;">Obavljena aktivnost</th>
-                                    <th style="width: 25%;">Razgovor obavio</th>
+                                    <th style="text-align: left; padding: 6px 8px;">Datum</th>
+                                    <th style="text-align: left; padding: 6px 8px;">Obavljena aktivnost</th>
+                                    <th style="text-align: left; padding: 6px 8px;">Razgovor obavio</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 <tr t-foreach="o.tracking_list_ids.sorted('date')" t-as="entry">
-                                    <td>
+                                    <td style="text-align: left; padding: 6px 8px; vertical-align: top;">
                                         <span t-field="entry.date"
-                                              t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                                            t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
                                     </td>
-                                    <td>
+                                    <td style="text-align: left; padding: 6px 8px; vertical-align: top;">
                                         <span t-field="entry.info"/>
                                     </td>
-                                    <td>
+                                    <td style="text-align: left; padding: 6px 8px; vertical-align: top;">
                                         <span t-field="entry.create_uid.name"/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <div style="text-align: right; margin-top: 40px;">
-                            ____________________<br/>
-                            (potpis)
+                        <div style="height: 140px;"></div>
+
+                        <div style="text-align: right; padding-right: 20px;">
+                            <div style="display: inline-block; width: 180px; text-align: center;">
+                                ____________________<br/>
+                                (potpis)
+                            </div>
                         </div>
 
                     </div>

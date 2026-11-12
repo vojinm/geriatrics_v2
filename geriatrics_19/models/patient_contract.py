@@ -13,6 +13,28 @@ class MedicalPatientContract(models.Model):
         tracking=True,
     )
 
+    contract_type = fields.Selection(
+        selection=[
+            ('dependent', 'Zavisni korisnik'),
+            ('independent', 'Samostalni korisnik'),
+        ],
+        string='Kategorija korisnika',
+        tracking=True,
+    )
+
+    monthly_price = fields.Monetary(
+        string='Ugovorena mjesečna cijena',
+        currency_field='currency_id',
+        tracking=True,
+    )
+
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Valuta',
+        default=lambda self: self.env.ref('base.BAM').id,
+        required=True,
+    )
+
     patient_id = fields.Many2one(
         'medical.patient',
         string='Pacijent',
@@ -32,6 +54,12 @@ class MedicalPatientContract(models.Model):
         'res.partner',
         string='Ugovarač',
         ondelete='restrict',
+        tracking=True,
+    )
+
+    date_signed = fields.Date(
+        string='Datum zaključenja ugovora',
+        default=fields.Date.context_today,
         tracking=True,
     )
 

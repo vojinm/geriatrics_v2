@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_patient_contract_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+
+                        <div style="text-align: center;">
+                            <p>
+                                R E P U B L I K A S R P S K A<br/>
+                                JU DOM ZA STARIJA LICA<br/>
+                                BANJA LUKA, Krajiških brigada 104<br/>
+                                tel. 051/305-399; tel/fax 051/319-407
+                            </p>
+                        </div>
+
+                        <p>
+                            Broj: <span t-field="o.name"/><br/>
+                            Datum: <span t-field="o.date_signed"
+                                         t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                        </p>
+
+                        <h2 style="text-align: center;">
+                            UGOVOR O SMJEŠTAJU
+                        </h2>
+
+                        <h3 style="text-align: center;">
+                            u JU Dom za starija lica Banja Luka
+                        </h3>
+
+                        <p>
+                            Zaključen dana:
+                            <span t-field="o.date_signed"
+                                  t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                        </p>
+
+                        <h3>UGOVORNE STRANE</h3>
+
+                        <p>
+                            <u>Prva ugovorna strana:</u>
+                            JU Dom za starija lica Banja Luka,
+                            Krajiških brigada 104
+                            (u daljem tekstu: Dom), kao davalac usluga.
+                        </p>
+
+                        <p>
+                            <u>Druga ugovorna strana:</u>
+                            Korisnik:
+                            <strong>
+                                <span t-field="o.patient_id.name"/>
+                                <span t-field="o.patient_id.lastname"/>
+                            </strong>,
+                            rođ.
+                            <t t-if="o.patient_id.birthdate">
+                                <span t-esc="o.patient_id.birthdate.year"/>
+                            </t>
+                            iz
+                            <span t-field="o.patient_id.partner_id.city"/>.
+                        </p>
+
+                        <p>
+                            <strong>Naručilac usluga:</strong><br/>
+                            <span t-field="o.requester_id.name"/>
+                            <span t-field="o.requester_id.lastname"/><br/>
+
+                            <t t-if="o.requester_id.street">
+                                <span t-field="o.requester_id.street"/><br/>
+                            </t>
+
+                            <t t-if="o.requester_id.city">
+                                <span t-field="o.requester_id.city"/>,
+                            </t>
+
+                            <span t-field="o.requester_id.country_id.name"/><br/>
+
+                            <t t-if="o.requester_id.phone">
+                                TEL: <span t-field="o.requester_id.phone"/>
+                            </t>
+                        </p>
+
+                        <p>
+                            Ugovorne strane su se sporazumjele o sljedećem:
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 25px;">
+                            Član 1.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Dom prima na izdržavanje
+                            <strong>
+                                <span t-field="o.patient_id.name"/>
+                                <span t-field="o.patient_id.lastname"/>
+                            </strong>,
+                            rođ.
+                            <t t-if="o.patient_id.birthdate">
+                                <span t-esc="o.patient_id.birthdate.year"/>
+                            </t>
+                            iz
+                            <span t-field="o.patient_id.partner_id.city"/>
+                            i obavezuje se da će osigurati:
+                            stanovanje, ishranu, njegu, zdravstvenu zaštitu,
+                            kulturno-zabavne, rekreativne, okupacione i druge
+                            usluge zavisno od potreba, sposobnosti i interesovanja
+                            korisnika u skladu sa potrebama i mogućnostima.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 2.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Naručilac - korisnik usluga je saglasan:
+                        </p>
+
+                        <ul style="text-align: justify;">
+                            <li>sa smještajem korisnika</li>
+                            <li>sa plaćanjem usluga smještaja</li>
+                            <li>
+                                nadoknaditi svaku štetu koju učini korisnik Domu
+                                na način i po postupku utvrđenom opštim propisima
+                                o naknadi štete
+                            </li>
+                            <li>
+                                da u slučaju prestanka smještaja, naručilac usluga
+                                je dužan preuzeti korisnika i njegove lične stvari,
+                                u protivnom će plaćati punu cijenu smještaja
+                            </li>
+                            <li>
+                                s promjenama smještaja korisnika zbog promjena
+                                psiho-fizičkog stanja
+                            </li>
+                            <li>
+                                da u slučaju potrebe obezbjedi pelene, lijekove
+                                i preglede koji se plaćaju
+                            </li>
+                        </ul>
+
+                        <h4 style="text-align: center;">
+                            Član 3.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Cijene usluga smještaja u Domu utvrđuje
+                            Ministarstvo zdravlja i socijalne zaštite Republike Srpske.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Cijena usluga smještaja za jedan mjesec iznosi
+                            <strong>
+                                <span t-field="o.monthly_price"
+                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>.
+                            </strong>
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Pored cijene smještaja, prilikom prijema korisnika,
+                            naručilac - korisnik usluga uplaćuje i depozit od
+                            100 KM na ime kupovine lijekova koji se ne nalaze na
+                            pozitivnoj listi ili kupovine pelena preko količine
+                            koje odobrava Fond zdravstva.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Dom zadržava pravo izmjene ugovorene cijene, s tim
+                            da u roku od 7 dana obavijesti naručioca - korisnika
+                            usluga o izmjeni cijene, a ukoliko naručilac -
+                            korisnik usluga ne prihvata novu cijenu, u roku
+                            od 10 dana naručilac usluga je dužan da preuzme korisnika.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Ukoliko u toku boravka korisnika usluga u Domu dođe
+                            do promjene statusa – promjena u vrstama usluga,
+                            naručilac – korisnik usluga se obavezuje da,
+                            na osnovu obavještenja nadležne službe Doma
+                            o nastalim promjenama, prihvati cijenu koja je
+                            predviđena za kategoriju kojoj korisnik pripada.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 4.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Plaćanje se vrši mjesečno unaprijed do 8-og u mjesecu,
+                            kao akontacija, na osnovu ispostavljene fakture,
+                            na žiro-račun Doma br. 562-099-00000181-48
+                            kod NLB Razvojne banke Banja Luka ili na blagajni Doma.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Dom ima pravo na zakonsku zateznu kamatu na iznose
+                            računa plaćene poslije roka iz stava 1. ovog člana,
+                            a korisnik će biti otpušten bez otkaznog roka.
+                            Cijenu smještaja i druge troškove plaća naručilac usluga.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 5.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Prilikom smještaja korisnika, naručilac usluga je
+                            dužan obezbjediti potrebnu odjeću i obuću za korisnika,
+                            a ubuduće će se zajednički utvrditi potreba za istom,
+                            koju je u obavezi obezbjediti naručilac usluga.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            U protivnom, Dom će obezbjediti odjeću i obuću i za
+                            istu račun dostaviti naručiocu usluga radi naplate
+                            u zakonskom roku.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 6.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Troškove zdravstvene zaštite snosi Fond zdravstvenog
+                            osiguranja. Ostale troškove zdravstvene zaštite snosi
+                            naručilac usluga.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Pogrebne troškove snosi naručilac usluga.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 7.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Ukoliko korisnik privremeno odsustvuje iz Doma preko
+                            5, a manje od 15 dana, plaća 90% od utvrđene cijene
+                            usluga, a ukoliko odsustvuje preko 15, a manje od
+                            30 dana plaća 70% od utvrđene cijene smještaja.
+                            Ukoliko korisnik odsustvuje preko 30 dana, a manje
+                            od 60 dana, cijena će biti umanjena za 50%.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Ukoliko naručilac - korisnik usluga otkaže smještaj,
+                            plaća 50% od cijene smještaja za korištenje usluga
+                            10 dana, a preko 10 dana korisnik plaća 100% od
+                            mjesečne cijene smještaja.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Ukoliko korisnik umre, obaveza plaćanja prestaje
+                            danom kada je nastupila smrt.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Ukoliko korisnik privremeno odsustvuje iz Doma radi
+                            bolničkog liječenja, naručilac usluga za taj period
+                            plaća 50% iznosa na ime režijskih troškova.
+                        </p>
+
+                        <h4 style="text-align: center;">
+                            Član 8.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Ukoliko korisnik teže ili češće krši kućni red
+                            i disciplinu, biti će otpušten bez otkaznog roka
+                            i upućen na zbrinjavanje naručiocu usluga.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 9.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Svaka ugovorna strana može ovaj ugovor raskinuti
+                            uz otkazni rok od mjesec dana, osim ukoliko se
+                            radi o slučaju iz članka 4. stavak 2. i čl. 8.
+                            ovog ugovora.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 10.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Ovaj ugovor se zaključuje na neodređeno vrijeme.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Zaključivanjem ovog ugovora, naručilac – korisnik
+                            usluga je saglasan sa svim mjerama poduzetim od
+                            strane stručnog osoblja Doma glede njegovog
+                            socijalnog i zdravstvenog zbrinjavanja
+                            (mjere liječenja, premještaj u Domu ili na drugi
+                            nivo socijalno-zdravstvene zaštite).
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 11.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Ovaj ugovor je sačinjen u 4 (četiri) istovjetna
+                            primjerka, od kojih 3 (tri) primjerka zadržava Dom,
+                            a 1 (jedan) primjerak se dostavlja naručiocu usluga,
+                            a primjenjivaće se od
+                            <strong>
+                                <span t-field="o.date_start"
+                                    t-options='{"widget": "date", "format": "dd.MM.yyyy."}'/>
+                            </strong>
+                            godine.
+                        </p>
+
+                        <h4 style="text-align: center; margin-top: 20px;">
+                            Član 12.
+                        </h4>
+
+                        <p style="text-align: justify;">
+                            Za sporove po ovom ugovoru nadležan je
+                            Osnovni sud u Banjoj Luci.
+                        </p>
+
+                        <p style="text-align: justify;">
+                            Na osnovu člana 24. stav 1. tačka 3. Zakona o
+                            porezu na dodatnu vrijednost
+                            («Sl. glasnik BiH» br. 9/05 i 35/05)
+                            oslobođeno plaćanja PDV-a.
+                        </p>
+
+                        <table style="width: 100%; margin-top: 45px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 45%; text-align: center; vertical-align: top;">
+                                    <strong>Naručilac usluga</strong>
+                                    <br/><br/><br/>
+                                    __________________________
+                                    <br/>
+                                    <span t-field="o.requester_id.name"/>
+                                    <span t-field="o.requester_id.lastname"/>
+                                </td>
+
+                                <td style="width: 10%;"></td>
+
+                                <td style="width: 45%; text-align: center; vertical-align: top;">
+                                    <strong>Davalac usluga</strong>
+                                    <br/><br/><br/>
+                                    __________________________
+                                    <br/>
+                                    Direktor
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

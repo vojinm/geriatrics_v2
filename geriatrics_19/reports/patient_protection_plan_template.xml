@@ -3,7 +3,7 @@
     <template id="report_patient_protection_plan_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
+                <t t-call="web.basic_layout">
                     <div class="page">
 
                         <h2 style="text-align: center;">PLAN ZAŠTITE</h2>
@@ -22,7 +22,7 @@
                             <span style="margin-left: 5px;" t-field="o.hospitalization_unit_id"/>
                         </p>
 
-                        <br/>
+                        <div style="height: 55px;"></div>
 
                         <div style="margin-bottom: 25px;">
                             <p style="margin-bottom: 6px;">
@@ -66,8 +66,10 @@
                             <p t-field="o.long_goals"/>
                         </div>
 
-                        <div style="margin-top: 45px; text-align: right;">
-                            <div style="display: inline-block; text-align: center;">
+                        <div style="height: 150px;"></div>
+
+                        <div style="text-align: right; padding-right: 20px;">
+                            <div style="display: inline-block; width: 180px; text-align: center;">
                                 ___________________<br/>
                                 Socijalni radnik
                             </div>

@@ -27,6 +27,8 @@
         'reports/patient_tracking_report.xml',
         'reports/patient_protection_plan_template.xml',
         'reports/patient_protection_plan_report.xml',
+        'reports/patient_contract_template.xml',
+        'reports/patient_contract_report.xml',
     ],
     "assets": {
             "web.assets_backend": [

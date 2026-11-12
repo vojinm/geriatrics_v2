@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="paperformat_patient_protection_plan" model="report.paperformat">
+        <field name="name">Gerijatrija - Plan zaštite A4</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">15</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">20</field>
+        <field name="margin_right">20</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
     <record id="action_report_patient_protection_plan" model="ir.actions.report">
         <field name="name">Plan zaštite</field>
         <field name="model">medical.patient</field>
         <field name="report_type">qweb-pdf</field>
+        <field name="paperformat_id" ref="paperformat_patient_protection_plan"/>
         <field name="report_name">geriatrics_19.report_patient_protection_plan_document</field>
         <field name="report_file">geriatrics_19.report_patient_protection_plan_document</field>
         <field name="binding_model_id" ref="model_medical_patient"/>
