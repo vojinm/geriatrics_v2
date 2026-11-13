@@ -18,6 +18,7 @@ class MedicalInsurance(models.Model):
 
     company = fields.Many2one(
         'res.partner',
+        domain=[('is_company', '=', True)],
         string='Osiguravajuća institucija',
     )
 

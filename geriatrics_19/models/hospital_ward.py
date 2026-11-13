@@ -13,6 +13,7 @@ class MedicalHospitalWard(models.Model):
 
     institution_id = fields.Many2one(
         'res.partner',
+        domain=[('is_company', '=', True)],
         string='Ustanova',
         ondelete='restrict',
     )
