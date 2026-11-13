@@ -10,6 +10,8 @@
         'security/ir.model.access.csv',
         'data/relationship_types.xml',
         'views/patient_views.xml',
+        'views/report_menu.xml',
+        'wizard/report_selection_views.xml',
         'views/patient_contract_views.xml',
         'views/inpatient_registration_views.xml',
         'views/partner_views.xml',

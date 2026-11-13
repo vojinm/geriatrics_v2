@@ -18,3 +18,4 @@ access_medical_hospital_unit_user,medical.hospital.unit user,model_medical_hospi
 access_medical_hospital_building_user,medical.hospital.building user,model_medical_hospital_building,base.group_user,1,1,1,0
 access_medical_hospital_ward_user,medical.hospital.ward user,model_medical_hospital_ward,base.group_user,1,1,1,0
 access_medical_hospital_bed_user,medical.hospital.bed user,model_medical_hospital_bed,base.group_user,1,1,1,0
+access_geriatrics_report_selection,access.geriatrics.report.selection,model_geriatrics_report_selection,base.group_user,1,1,1,1
