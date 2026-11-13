@@ -174,16 +174,20 @@
                             </group>
 
                             <group string="Važne medicinske informacije">
+                                <label for="critical_info"
+                                    string="Bolesti, alergije, operacije i druge značajne medicinske informacije"
+                                    colspan="2"/>
                                 <field name="critical_info"
                                     nolabel="1"
-                                    placeholder="Važne bolesti, alergije, operacije i druge medicinske informacije..."
                                     colspan="2"/>
                             </group>
 
                             <group string="Dodatne informacije">
+                                <label for="general_info"
+                                    string="Opšte informacije o pacijentu"
+                                    colspan="2"/>
                                 <field name="general_info"
                                     nolabel="1"
-                                    placeholder="Opšte informacije o pacijentu..."
                                     colspan="2"/>
                             </group>
 
@@ -278,40 +282,59 @@
                                 </list>
                             </field>
                         </page>
+
                         <page string="Plan zaštite" name="care_plan">
+
                             <group string="Procjena stanja" col="2">
+                                <label for="current_functioning"
+                                    string="Procjena trenutnog funkcionisanja"
+                                    colspan="2"/>
                                 <field name="current_functioning"
                                     nolabel="1"
-                                    placeholder="Procjena trenutnog funkcionisanja..."
+                                    colspan="2"/>
+
+                                <label for="adaptation_help"
+                                    string="Pomoć pri adaptaciji"
                                     colspan="2"/>
                                 <field name="adaptation_help"
                                     nolabel="1"
-                                    placeholder="Pomoć pri adaptaciji..."
                                     colspan="2"/>
                             </group>
 
                             <group string="Planirane aktivnosti" col="2">
+                                <label for="family_plan"
+                                    string="Plan rada s porodicom"
+                                    colspan="2"/>
                                 <field name="family_plan"
                                     nolabel="1"
-                                    placeholder="Plan rada s porodicom..."
+                                    colspan="2"/>
+
+                                <label for="freetime_plan"
+                                    string="Plan slobodnog vremena"
                                     colspan="2"/>
                                 <field name="freetime_plan"
                                     nolabel="1"
-                                    placeholder="Plan slobodnog vremena..."
                                     colspan="2"/>
                             </group>
 
                             <group string="Ciljevi" col="2">
+                                <label for="short_goals"
+                                    string="Kratkoročni ciljevi"
+                                    colspan="2"/>
                                 <field name="short_goals"
                                     nolabel="1"
-                                    placeholder="Kratkoročni ciljevi..."
+                                    colspan="2"/>
+
+                                <label for="long_goals"
+                                    string="Dugoročni ciljevi"
                                     colspan="2"/>
                                 <field name="long_goals"
                                     nolabel="1"
-                                    placeholder="Dugoročni ciljevi..."
                                     colspan="2"/>
                             </group>
+
                         </page>
+
 
                         <page string="Ugovori" name="contracts">
                             <field name="contract_ids">
