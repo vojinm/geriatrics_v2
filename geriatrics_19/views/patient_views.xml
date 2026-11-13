@@ -317,6 +317,7 @@
                             <field name="contract_ids">
                                 <list string="Ugovori">
                                     <field name="name"/>
+                                    <field name="date_signed" string="Datum potpisa"/>
                                     <field name="requester_id"/>
                                     <field name="contractor_id"/>
                                     <field name="date_start"/>

@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <list string="Ugovori">
                 <field name="name"/>
+                <field name="date_signed" string="Datum potpisa"/>
                 <field name="patient_id"/>
                 <field name="contract_type"/>
                 <field name="requester_id"/>
