@@ -41,8 +41,18 @@ class InpatientRegistration(models.Model):
         string="Datum otpusta",
     )
 
-    discharge_reason = fields.Text(
-        string="Razlog otpusta",
+    discharge_reason = fields.Selection(
+    [
+        ("bolnica", "Na bolničkom liječenju"),
+        ("odsutan", "Odsustvo"),
+        ("napustio_centar", "Napustio centar"),
+        ("preminuo", "Preminuo"),
+    ],
+    string="Razlog otpusta",
+    )
+
+    discharge_note = fields.Text(
+        string="Napomena o otpustu",
     )
 
     cancellation_reason = fields.Text(
@@ -133,9 +143,9 @@ class InpatientRegistration(models.Model):
                 reason = vals.get(
                     "discharge_reason", record.discharge_reason
                 )
-                if not reason or not reason.strip():
+                if not reason:
                     raise UserError(
-                        "Morate unijeti razlog otpusta pacijenta."
+                        "Morate izabrati razlog otpusta pacijenta."
                     )
         if "state" in vals or "patient_id" in vals:
             active_patient_ids = []
@@ -317,9 +327,9 @@ class InpatientRegistration(models.Model):
                     "Samo hospitalizovan pacijent može biti otpušten."
                 )
 
-            if not record.discharge_reason or not record.discharge_reason.strip():
+            if not record.discharge_reason:
                 raise UserError(
-                    "Morate unijeti razlog otpusta pacijenta."
+                    "Morate izabrati razlog otpusta pacijenta."
                 )
 
             record.write({

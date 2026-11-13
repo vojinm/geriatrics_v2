@@ -52,6 +52,8 @@
                         <field name="discharge_date"/>
                         <field name="discharge_reason"
                             invisible="state == 'draft'"/>
+                        <field name="discharge_note"
+                            invisible="state == 'draft'"/>
                         <field name="cancellation_reason"
                             invisible="state not in ['draft', 'cancelled']"/>
                         <field name="state" readonly="1"/>
