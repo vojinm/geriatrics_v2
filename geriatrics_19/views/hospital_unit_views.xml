@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Lista odjela -->
+    <record id="view_medical_hospital_unit_list" model="ir.ui.view">
+        <field name="name">medical.hospital.unit.list</field>
+        <field name="model">medical.hospital.unit</field>
+        <field name="arch" type="xml">
+            <list string="Odjeli">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="institution_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Forma odjela -->
+    <record id="view_medical_hospital_unit_form" model="ir.ui.view">
+        <field name="name">medical.hospital.unit.form</field>
+        <field name="model">medical.hospital.unit</field>
+        <field name="arch" type="xml">
+            <form string="Odjel">
+                <sheet>
+                    <group>
+                        <group string="Osnovni podaci">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="institution_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Dodatne informacije">
+                        <field name="extra_info" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Akcija -->
+    <record id="action_medical_hospital_unit" model="ir.actions.act_window">
+        <field name="name">Odjeli</field>
+        <field name="res_model">medical.hospital.unit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Meni -->
+    <menuitem
+        id="menu_medical_hospital_unit"
+        name="Odjeli"
+        parent="menu_health_centers"
+        action="action_medical_hospital_unit"
+        sequence="30"/>
+
+</odoo>

@@ -11,6 +11,18 @@ class MedicalPatient(models.Model):
         compute='_compute_hospitalization_unit',
     )
 
+    hospitalization_ward_id = fields.Many2one(
+        'medical.hospital.ward',
+        string='Trenutna soba',
+        compute='_compute_hospitalization_unit',
+    )
+
+    hospitalization_bed_id = fields.Many2one(
+        'medical.hospital.bed',
+        string='Trenutni krevet',
+        compute='_compute_hospitalization_unit',
+    )
+
     def _compute_hospitalization_unit(self):
         Inpatient = self.env['medical.inpatient.registration']
 
@@ -22,7 +34,17 @@ class MedicalPatient(models.Model):
 
             patient.hospitalization_unit_id = (
                 hospitalization.medical_hospital_unit_id
-                if hospitalization
+                if hospitalization else False
+            )
+
+            patient.hospitalization_bed_id = (
+                hospitalization.bed_id
+                if hospitalization else False
+            )
+
+            patient.hospitalization_ward_id = (
+                hospitalization.bed_id.ward_id
+                if hospitalization and hospitalization.bed_id
                 else False
             )
 

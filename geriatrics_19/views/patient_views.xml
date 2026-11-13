@@ -130,12 +130,25 @@
                             <field name="sex"/>
                         </group>
 
-                        <group string="Kontakt i status">
+                        <group string="Status">
                             <field name="active"/>
-                            <field name="phone"/>
-                            <field name="mobile"/>
-                            <field name="street"/>
-                            <field name="city"/>
+                            <field name="deceased"/>
+                            <field name="dod" invisible="not deceased"/>
+
+                            <field name="hospitalization_unit_id"
+                                string="Trenutni odjel"
+                                readonly="1"
+                                options="{'no_open': True}"/>
+
+                            <field name="hospitalization_ward_id"
+                                string="Trenutna soba"
+                                readonly="1"
+                                options="{'no_open': True}"/>
+
+                            <field name="hospitalization_bed_id"
+                                string="Trenutni krevet"
+                                readonly="1"
+                                options="{'no_open': True}"/>
                         </group>
                     </group>
 
@@ -152,9 +165,11 @@
                                     <field name="mind_deformation_ids" widget="many2many_tags"/>
                                 </group>
 
-                                <group string="Status pacijenta">
-                                    <field name="deceased"/>
-                                    <field name="dod" invisible="not deceased"/>
+                                <group string="Kontakt">
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                    <field name="street"/>
+                                    <field name="city"/>
                                 </group>
                             </group>
 

@@ -16,6 +16,7 @@
         'views/patient_activity_views.xml',
         'views/patient_tracking_views.xml',
         'views/health_center_views.xml',
+        'views/hospital_unit_views.xml',
         'views/hospital_building_views.xml',
         'views/hospital_ward_views.xml',
         'views/hospital_bed_views.xml',
