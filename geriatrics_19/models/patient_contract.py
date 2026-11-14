@@ -7,6 +7,13 @@ class MedicalPatientContract(models.Model):
     _description = 'Ugovor pacijenta'
     _order = 'date_start desc, id desc'
 
+    legacy_id = fields.Integer(
+        string='Legacy ID (Odoo 8)',
+        index=True,
+        copy=False,
+        readonly=True,
+    )
+
     name = fields.Char(
         string='Broj ugovora',
         required=True,
@@ -35,10 +42,18 @@ class MedicalPatientContract(models.Model):
         required=True,
     )
 
+    legacy_partner_id = fields.Many2one(
+        'res.partner',
+        string='Originalni kontakt (Odoo 8)',
+        ondelete='restrict',
+        copy=False,
+        readonly=True,
+        index=True,
+    )
+
     patient_id = fields.Many2one(
         'medical.patient',
         string='Pacijent',
-        required=True,
         ondelete='restrict',
         tracking=True,
     )
@@ -77,6 +92,7 @@ class MedicalPatientContract(models.Model):
 
     state = fields.Selection(
         selection=[
+            ('draft', 'Nacrt'),
             ('open', 'Otvoren'),
             ('closed', 'Zatvoren'),
         ],
@@ -95,18 +111,40 @@ class MedicalPatientContract(models.Model):
         "Pacijent već ima otvoren ugovor."
     )
 
-    @api.constrains('date_start', 'date_end')
+    @api.constrains('date_start', 'date_end', 'legacy_id')
     def _check_dates(self):
         for contract in self:
+            if contract.legacy_id:
+                continue
+
             if contract.date_end and contract.date_start:
                 if contract.date_end < contract.date_start:
                     raise ValidationError(
-                        "Datum završetka ugovora ne može biti raniji od datuma početka."
+                        "Datum završetka ugovora ne može biti "
+                        "raniji od datuma početka."
                     )
-    @api.constrains('state', 'date_end')
+
+    @api.constrains('state', 'date_end', 'legacy_id')
     def _check_closed_contract_date_end(self):
         for contract in self:
+            if contract.legacy_id:
+                continue
+
             if contract.state == 'closed' and not contract.date_end:
                 raise ValidationError(
                     "Zatvoreni ugovor mora imati datum završetka."
                 )
+    @api.constrains('patient_id', 'legacy_partner_id', 'legacy_id')
+    def _check_contract_patient_reference(self):
+        for contract in self:
+            if not contract.patient_id:
+                if not contract.legacy_id:
+                    raise ValidationError(
+                        "Novi ugovor mora imati odabranog pacijenta."
+                    )
+
+                if not contract.legacy_partner_id:
+                    raise ValidationError(
+                        "Migrirani ugovor bez pacijenta mora imati "
+                        "originalni kontakt iz Odoo 8."
+                    )

@@ -47,6 +47,7 @@
                         <p>
                             <u>Druga ugovorna strana:</u>
                             Korisnik:
+                            <t t-if="o.patient_id">
                             <strong>
                                 <span t-field="o.patient_id.name"/>
                                 <span t-field="o.patient_id.lastname"/>
@@ -56,7 +57,16 @@
                                 <span t-esc="o.patient_id.birthdate.year"/>
                             </t>
                             iz
-                            <span t-field="o.patient_id.partner_id.city"/>.
+                            <span t-field="o.patient_id.partner_id.city"/>
+                        </t>
+                        <t t-elif="o.legacy_partner_id">
+                            <strong>
+                                <span t-field="o.legacy_partner_id.name"/>
+                            </strong>
+                            <t t-if="o.legacy_partner_id.city">
+                                iz <span t-field="o.legacy_partner_id.city"/>
+                            </t>
+                        </t>
                         </p>
 
                         <p>
@@ -89,16 +99,26 @@
 
                         <p style="text-align: justify;">
                             Dom prima na izdržavanje
-                            <strong>
-                                <span t-field="o.patient_id.name"/>
-                                <span t-field="o.patient_id.lastname"/>
-                            </strong>,
-                            rođ.
-                            <t t-if="o.patient_id.birthdate">
-                                <span t-esc="o.patient_id.birthdate.year"/>
-                            </t>
-                            iz
-                            <span t-field="o.patient_id.partner_id.city"/>
+                            <t t-if="o.patient_id">
+                        <strong>
+                            <span t-field="o.patient_id.name"/>
+                            <span t-field="o.patient_id.lastname"/>
+                        </strong>,
+                        rođ.
+                        <t t-if="o.patient_id.birthdate">
+                            <span t-esc="o.patient_id.birthdate.year"/>
+                        </t>
+                        iz
+                        <span t-field="o.patient_id.partner_id.city"/>
+                    </t>
+                    <t t-elif="o.legacy_partner_id">
+                        <strong>
+                            <span t-field="o.legacy_partner_id.name"/>
+                        </strong>
+                        <t t-if="o.legacy_partner_id.city">
+                            iz <span t-field="o.legacy_partner_id.city"/>
+                        </t>
+                    </t>
                             i obavezuje se da će osigurati:
                             stanovanje, ishranu, njegu, zdravstvenu zaštitu,
                             kulturno-zabavne, rekreativne, okupacione i druge
