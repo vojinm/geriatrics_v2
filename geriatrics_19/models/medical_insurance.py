@@ -6,6 +6,30 @@ class MedicalInsurance(models.Model):
     _description = 'Osiguranje pacijenta'
     _order = 'id desc'
 
+    legacy_id = fields.Integer(
+        string='Originalni Odoo 8 ID',
+        index=True,
+        copy=False,
+        readonly=True,
+    )
+
+    _legacy_id_unique_index = models.UniqueIndex(
+        "(legacy_id) WHERE legacy_id > 0",
+        "Originalni Odoo 8 ID mora biti jedinstven.",
+    )
+
+    legacy_create_uid = fields.Integer(
+        string='Originalni autor (Odoo 8)',
+        readonly=True,
+        copy=False,
+    )
+
+    legacy_write_uid = fields.Integer(
+        string='Originalni urednik (Odoo 8)',
+        readonly=True,
+        copy=False,
+    )
+
     name = fields.Many2one(
         'res.partner',
         string='Nosilac osiguranja',
@@ -40,6 +64,14 @@ class MedicalInsurance(models.Model):
             ('state', 'Državno'),
             ('labour_union', 'Sindikalno'),
             ('private', 'Privatno'),
+            ('penzioner', 'Penzioner'),
+            ('centar_soc_rad', 'Centar za socijalni rad'),
+            ('suprug', 'Preko supružnika'),
+            ('poljuprivredno', 'Poljoprivredno'),
+            ('zavod', 'Zavod'),
+            ('radni', 'Radni odnos'),
+            ('dobrovoljno', 'Dobrovoljno'),
+            ('izbjegli', 'Izbjeglički status'),
         ],
         string='Vrsta osiguranja',
     )
