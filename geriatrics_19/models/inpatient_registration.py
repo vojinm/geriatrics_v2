@@ -7,6 +7,18 @@ class InpatientRegistration(models.Model):
     _description = "Hospitalizacija pacijenta"
     _order = "hospitalization_date desc, id desc"
 
+    legacy_id = fields.Integer(
+        string="Originalni Odoo 8 ID",
+        index=True,
+        copy=False,
+        readonly=True,
+    )
+
+    _legacy_id_unique_index = models.UniqueIndex(
+        "(legacy_id) WHERE legacy_id > 0",
+        "Originalni Odoo 8 ID mora biti jedinstven.",
+    )
+
     name = fields.Char(
         string="Broj hospitalizacije",
         required=True,
@@ -55,6 +67,11 @@ class InpatientRegistration(models.Model):
         string="Napomena o otpustu",
     )
 
+    info = fields.Text(
+        string="Dodatne informacije",
+        help="Dodatne informacije prenesene iz Odoo 8.",
+    )
+
     cancellation_reason = fields.Text(
         string="Razlog otkazivanja",
     )
@@ -73,6 +90,9 @@ class InpatientRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        if self.env.context.get("geriatrics_legacy_import"):
+            return super().create(vals_list)
+
         for vals in vals_list:
             if vals.get("state") == "hospitalized":
                 raise UserError(
