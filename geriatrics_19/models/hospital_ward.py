@@ -6,6 +6,18 @@ class MedicalHospitalWard(models.Model):
     _description = 'Soba zdravstvene ustanove'
     _order = 'name'
 
+    legacy_id = fields.Integer(
+        string='Originalni Odoo 8 ID',
+        index=True,
+        copy=False,
+        readonly=True,
+    )
+
+    _legacy_id_unique_index = models.UniqueIndex(
+        '(legacy_id) WHERE legacy_id > 0',
+        'Originalni Odoo 8 ID mora biti jedinstven.',
+    )
+
     name = fields.Char(
         string='Naziv / broj sobe',
         required=True,
