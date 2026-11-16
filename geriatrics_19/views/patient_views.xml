@@ -378,10 +378,39 @@
         </field>
     </record>
 
+    <record id="view_medical_patient_search" model="ir.ui.view">
+        <field name="name">medical.patient.search</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <search string="Pretraga pacijenata">
+                <field name="display_name" string="Pacijent"/>
+                <field name="patient_number"/>
+
+                <separator/>
+
+                <filter name="active_patients"
+                        string="Aktivni pacijenti"
+                        domain="[('active', '=', True)]"/>
+
+                <filter name="inactive_patients"
+                        string="Neaktivni pacijenti"
+                        domain="[('active', '=', False), ('deceased', '=', False)]"/>
+
+                <filter name="deceased_patients"
+                        string="Preminuli pacijenti"
+                        domain="[('deceased', '=', True)]"/>
+
+                <separator/>
+            </search>
+        </field>
+    </record>
+
     <record id="action_medical_patient" model="ir.actions.act_window">
         <field name="name">Pacijenti</field>
         <field name="res_model">medical.patient</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_medical_patient_search"/>
+        <field name="context">{'search_default_active_patients': 1, 'active_test': False}</field>
     </record>
 
 <menuitem
