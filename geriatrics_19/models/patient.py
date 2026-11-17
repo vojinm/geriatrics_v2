@@ -5,48 +5,80 @@ class MedicalPatient(models.Model):
     _name = 'medical.patient'
     _description = 'Pacijent'
 
+    inpatient_ids = fields.One2many(
+        'medical.inpatient.registration',
+        'patient_id',
+        string='Hospitalizacije pacijenta',
+    )
+
+    hospitalization_institution_id = fields.Many2one(
+        'res.partner',
+        string='Trenutna ustanova',
+        compute='_compute_hospitalization_unit',
+        store=True,
+    )
+
+    hospitalization_building_id = fields.Many2one(
+        'medical.hospital.building',
+        string='Trenutni objekat',
+        compute='_compute_hospitalization_unit',
+        store=True,
+    )
+
     hospitalization_unit_id = fields.Many2one(
         'medical.hospital.unit',
         string='Aktuelni odjel',
         compute='_compute_hospitalization_unit',
+        store=True,
     )
 
     hospitalization_ward_id = fields.Many2one(
         'medical.hospital.ward',
         string='Trenutna soba',
         compute='_compute_hospitalization_unit',
+        store=True,
     )
 
     hospitalization_bed_id = fields.Many2one(
         'medical.hospital.bed',
         string='Trenutni krevet',
         compute='_compute_hospitalization_unit',
+        store=True,
     )
 
+    @api.depends(
+        'inpatient_ids.state',
+        'inpatient_ids.hospitalization_date',
+        'inpatient_ids.medical_hospital_unit_id',
+        'inpatient_ids.bed_id',
+        'inpatient_ids.patient_id',
+        'inpatient_ids.bed_id.ward_id',
+        'inpatient_ids.bed_id.ward_id.building_id',
+        'inpatient_ids.medical_hospital_unit_id.institution_id',
+    )
     def _compute_hospitalization_unit(self):
-        Inpatient = self.env['medical.inpatient.registration']
-
         for patient in self:
-            hospitalization = Inpatient.search([
-                ('patient_id', '=', patient.id),
-                ('state', '=', 'hospitalized'),
-            ], limit=1)
-
-            patient.hospitalization_unit_id = (
-                hospitalization.medical_hospital_unit_id
-                if hospitalization else False
+            hospitalizations = patient.inpatient_ids.filtered(
+                lambda h: h.state == 'hospitalized'
             )
 
-            patient.hospitalization_bed_id = (
-                hospitalization.bed_id
-                if hospitalization else False
-            )
+            hospitalization = hospitalizations.sorted(
+                key=lambda h: (h.hospitalization_date or fields.Date.to_date('1900-01-01'), h.id),
+                reverse=True,
+            )[:1]
 
-            patient.hospitalization_ward_id = (
-                hospitalization.bed_id.ward_id
-                if hospitalization and hospitalization.bed_id
-                else False
+            unit = hospitalization.medical_hospital_unit_id
+            bed = hospitalization.bed_id
+            ward = bed.ward_id
+            building = ward.building_id
+
+            patient.hospitalization_institution_id = (
+                unit.institution_id or ward.institution_id or False
             )
+            patient.hospitalization_building_id = building or False
+            patient.hospitalization_unit_id = unit or False
+            patient.hospitalization_ward_id = ward or False
+            patient.hospitalization_bed_id = bed or False
 
     inpatient_count = fields.Integer(
         string='Hospitalizacije',
