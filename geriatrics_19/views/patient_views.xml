@@ -56,10 +56,26 @@
         <field name="model">medical.patient</field>
         <field name="arch" type="xml">
             <list string="Pacijenti">
-                <field name="patient_number"/>
-                <field name="name"/>
-                <field name="lastname"/>
-                <field name="active"/>
+                <!-- Osnovni podaci -->
+                <field name="patient_number" optional="show"/>
+                <field name="name" optional="show"/>
+                <field name="lastname" optional="show"/>
+                <field name="age" string="Starost" optional="show"/>
+                <field name="sex" string="Pol" optional="show"/>
+                <field name="active" string="Aktivan" optional="show"/>
+                <field name="deceased" string="Preminuo" optional="show"/>
+
+                <!-- Trenutni smještaj -->
+                <field name="hospitalization_institution_id"
+                    string="Ustanova" optional="hide"/>
+                <field name="hospitalization_building_id"
+                    string="Objekat" optional="hide"/>
+                <field name="hospitalization_unit_id"
+                    string="Odjel" optional="show"/>
+                <field name="hospitalization_ward_id"
+                    string="Soba" optional="show"/>
+                <field name="hospitalization_bed_id"
+                    string="Krevet" optional="hide"/>
             </list>
         </field>
     </record>
@@ -399,6 +415,41 @@
                 <filter name="deceased_patients"
                         string="Preminuli pacijenti"
                         domain="[('deceased', '=', True)]"/>
+
+                <separator/>
+
+                <field name="hospitalization_institution_id"
+                    string="Ustanova"/>
+
+                <field name="hospitalization_building_id"
+                    string="Objekat"/>
+
+                <field name="hospitalization_unit_id"
+                    string="Odjel"/>
+
+                <field name="hospitalization_ward_id"
+                    string="Soba"/>
+
+                <field name="hospitalization_bed_id"
+                    string="Krevet"/>
+
+                <group>
+                    <filter name="group_by_institution"
+                            string="Ustanova"
+                            context="{'group_by': 'hospitalization_institution_id'}"/>
+
+                    <filter name="group_by_building"
+                            string="Objekat"
+                            context="{'group_by': 'hospitalization_building_id'}"/>
+
+                    <filter name="group_by_unit"
+                            string="Odjel"
+                            context="{'group_by': 'hospitalization_unit_id'}"/>
+
+                    <filter name="group_by_ward"
+                            string="Soba"
+                            context="{'group_by': 'hospitalization_ward_id'}"/>
+                </group>
 
                 <separator/>
             </search>
