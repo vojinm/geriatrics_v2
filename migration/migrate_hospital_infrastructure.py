@@ -3,8 +3,9 @@ import os
 from collections import Counter
 
 from odoo import api, SUPERUSER_ID
+from hospital_unit_mapping import canonical_unit_legacy_id
 
-CSV_DIR = "/tmp/geriatrics_migration"
+CSV_DIR = "/mnt/migration"
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
 EXPECTED = {
@@ -14,7 +15,8 @@ EXPECTED = {
     "hospital_beds.csv": 2,
 }
 
-INSTITUTION_MAP = {1: 18364}
+INSTITUTION_NAME = '"Gerontološki centar" Banja Luka'
+INSTITUTION_MAP = {}
 
 MODELS = {
     "building": "medical.hospital.building",
@@ -91,11 +93,27 @@ def migrate(env):
     }
 
     Partner = env["res.partner"].sudo()
-    partner = Partner.browse(18364).exists()
 
-    assert partner and partner.is_company, (
-        "Ustanova 18364 ne postoji ili nije kompanija"
+    partners = Partner.search([
+        ("name", "=", INSTITUTION_NAME),
+        ("is_company", "=", True),
+    ])
+
+    assert len(partners) <= 1, (
+        f"Pronađeno više ustanova sa nazivom {INSTITUTION_NAME}"
     )
+
+    if partners:
+        partner = partners
+        print(f"POSTOJECA USTANOVA: {partner.name} (ID {partner.id})")
+    else:
+        partner = Partner.create({
+            "name": INSTITUTION_NAME,
+            "is_company": True,
+        })
+        print(f"KREIRANA USTANOVA: {partner.name} (ID {partner.id})")
+
+    INSTITUTION_MAP[1] = partner.id
 
     for model_name in MODELS.values():
         Model = env[model_name].sudo()
@@ -122,10 +140,73 @@ def migrate(env):
 
     print("Objekti:", len(maps["building"]))
 
+    # Provjera podataka prije konsolidacije P5
+    p5_rows = [
+        row for row in data["unit"]
+        if canonical_unit_legacy_id(int(row["legacy_id"])) == 13
+    ]
+
+    assert len(p5_rows) == 27, (
+        f"P5: ocekivano 27 zapisa, pronadjeno {len(p5_rows)}"
+    )
+
+    p5_expected = {
+        "name": "P5",
+        "code": False,
+        "legacy_institution_id": False,
+        "extra_info": False,
+    }
+
+    for row in p5_rows:
+        actual = {
+            "name": row["name"].strip(),
+            "code": optional(row["code"]),
+            "legacy_institution_id": integer(
+                row["legacy_institution_id"]
+            ),
+            "extra_info": optional(row["extra_info"]),
+        }
+
+        assert actual == p5_expected, (
+            f"P5 legacy_id={row['legacy_id']}: "
+            f"neocekivani podaci: {actual}"
+        )
+
+    print("P5: provjereno 27 identicnih originalnih zapisa")
+
     # 2. Odjeli
-    for row in data["unit"]:
+    # Glavni zapisi se obradjuju prije svojih duplikata,
+    # nezavisno od redoslijeda u CSV fajlu.
+    sorted_units = sorted(
+        data["unit"],
+        key=lambda row: (
+            canonical_unit_legacy_id(int(row["legacy_id"])),
+            int(row["legacy_id"]),
+        ),
+    )
+
+    for row in sorted_units:
+        legacy_id = int(row["legacy_id"])
+        canonical_id = canonical_unit_legacy_id(legacy_id)
+
+        # Provjera da se spajaju samo potvrđeni duplikati P5.
+        if canonical_id != legacy_id:
+            assert row["name"].strip() == "P5", (
+                f"Odjel {legacy_id}: neocekivan naziv za P5"
+            )
+
+        # Ako je glavni odjel već kreiran, koristimo njegov ID.
+        if canonical_id in maps["unit"]:
+            maps["unit"][legacy_id] = maps["unit"][canonical_id]
+            continue
+
+        # Glavni zapis mora biti obrađen prije njegovih duplikata.
+        assert canonical_id == legacy_id, (
+            f"Glavni odjel {canonical_id} nije prethodno kreiran"
+        )
+
         vals = {
-            "legacy_id": integer(row["legacy_id"]),
+            "legacy_id": legacy_id,
             "name": row["name"],
             "code": optional(row["code"]),
             "institution_id": institution(
@@ -135,9 +216,10 @@ def migrate(env):
         }
 
         record = env[MODELS["unit"]].sudo().create(vals)
-        maps["unit"][int(row["legacy_id"])] = record.id
+        maps["unit"][legacy_id] = record.id
 
-    print("Odjeli:", len(maps["unit"]))
+    print("Odjeli - originalni ID-jevi:", len(maps["unit"]))
+    print("Odjeli - jedinstveni zapisi:", len(set(maps["unit"].values())))
 
     # 3. Sobe
     ward_booleans = [
@@ -247,18 +329,48 @@ def migrate(env):
     # Provjera broja zapisa i originalnih ID-jeva
     for key, model_name in MODELS.items():
         records = env[model_name].sudo().search([])
+
         expected_ids = {
             int(row["legacy_id"]) for row in data[key]
         }
-        actual_ids = set(records.mapped("legacy_id"))
 
-        assert actual_ids == expected_ids, (
-            f"{model_name}: legacy_id provjera nije uspjela"
+        assert set(maps[key]) == expected_ids, (
+            f"{model_name}: mapiranje originalnih ID-jeva nije potpuno"
         )
 
-        assert len(records) == len(expected_ids), (
-            f"{model_name}: pogresan broj zapisa"
-        )
+        if key == "unit":
+            expected_canonical_ids = {
+                canonical_unit_legacy_id(legacy_id)
+                for legacy_id in expected_ids
+            }
+
+            actual_ids = set(records.mapped("legacy_id"))
+
+            assert actual_ids == expected_canonical_ids, (
+                "Odjeli: provjera glavnih legacy_id nije uspjela"
+            )
+
+            assert len(records) == len(expected_canonical_ids), (
+                "Odjeli: pogresan broj jedinstvenih zapisa"
+            )
+
+            for legacy_id, record_id in maps["unit"].items():
+                canonical_id = canonical_unit_legacy_id(legacy_id)
+
+                assert record_id == maps["unit"][canonical_id], (
+                    f"Odjel {legacy_id}: pogresno mapiranje"
+                )
+
+        else:
+            actual_ids = set(records.mapped("legacy_id"))
+
+            assert actual_ids == expected_ids, (
+                f"{model_name}: legacy_id provjera nije uspjela"
+            )
+
+            assert len(records) == len(expected_ids), (
+                f"{model_name}: pogresan broj zapisa"
+            )
 
     # Provjera svih veza
     for row in data["ward"]:

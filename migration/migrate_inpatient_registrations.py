@@ -1,18 +1,23 @@
 import csv
 import os
 from collections import Counter
+from hospital_unit_mapping import (
+    canonical_unit_legacy_id,
+)
 
-CSV_PATH = "/tmp/geriatrics_migration/inpatient_registrations.csv"
+CSV_PATH = "/mnt/migration/inpatient_registrations.csv"
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
 if MODE not in ("TEST", "IMPORT"):
     raise ValueError("Mode must be TEST or IMPORT")
 
-Patient = env["medical.patient"]
-Unit = env["medical.hospital.unit"]
-Bed = env["medical.hospital.bed"]
-Registration = env["medical.inpatient.registration"].with_context(
-    geriatrics_legacy_import=True
+Patient = env["medical.patient"].sudo().with_context(active_test=False)
+Unit = env["medical.hospital.unit"].sudo().with_context(active_test=False)
+Bed = env["medical.hospital.bed"].sudo().with_context(active_test=False)
+
+Registration = env["medical.inpatient.registration"].sudo().with_context(
+    active_test=False,
+    geriatrics_legacy_import=True,
 )
 
 stats = Counter()
@@ -41,10 +46,22 @@ patient_map = {
     for record in Patient.search([("legacy_id", ">", 0)])
 }
 
-unit_map = {
+canonical_unit_map = {
     record.legacy_id: record.id
     for record in Unit.search([("legacy_id", ">", 0)])
 }
+
+unit_map = dict(canonical_unit_map)
+
+for row in rows:
+    legacy_unit_id = to_int(row["legacy_unit_id"])
+
+    if legacy_unit_id:
+        canonical_id = canonical_unit_legacy_id(legacy_unit_id)
+        record_id = canonical_unit_map.get(canonical_id)
+
+        if record_id:
+            unit_map[legacy_unit_id] = record_id
 
 bed_map = {
     record.legacy_id: record.id
