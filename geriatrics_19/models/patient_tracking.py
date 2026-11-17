@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class MedicalPatientTracking(models.Model):
@@ -48,3 +48,31 @@ class MedicalPatientTracking(models.Model):
         string='Opis aktivnosti',
         required=False,
     )
+
+    evidentirao = fields.Char(
+        string='Evidentirao',
+        compute='_compute_evidentirao',
+        store=False,
+        readonly=True,
+    )
+
+    @api.depends('legacy_id', 'legacy_create_uid', 'create_uid', 'create_uid.name')
+    def _compute_evidentirao(self):
+        legacy_users = {
+            1: 'B++',
+            5: 'Ljiljana Marjanović',
+            12: 'Predrag Dragičević',
+            13: 'Vladimir Miljković',
+            19: 'Renata Ražić',
+            20: 'Mirjana Janković',
+            21: 'Darinka Mandić',
+        }
+
+        for record in self:
+            if record.legacy_id and record.legacy_create_uid:
+                record.evidentirao = legacy_users.get(
+                    record.legacy_create_uid,
+                    f'Odoo 8 korisnik #{record.legacy_create_uid}',
+                )
+            else:
+                record.evidentirao = record.create_uid.name or ''

@@ -9,7 +9,7 @@
                 <field name="date"/>
                 <field name="patient_id"/>
                 <field name="info"/>
-                <field name="create_uid" string="Evidentirao"/>
+                <field name="evidentirao" string="Evidentirao" readonly="1"/>
             </list>
         </field>
     </record>

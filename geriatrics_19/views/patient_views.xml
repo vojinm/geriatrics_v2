@@ -379,13 +379,13 @@
                                 <list string="Evidencija rada" default_order="date desc, id desc">
                                     <field name="date"/>
                                     <field name="info"/>
-                                    <field name="create_uid" string="Evidentirao" readonly="1"/>
+                                    <field name="evidentirao" string="Evidentirao" readonly="1"/>
                                 </list>
                                 <form string="Evidencija rada s pacijentom">
                                     <group>
                                         <field name="date"/>
                                         <field name="info"/>
-                                        <field name="create_uid" string="Evidentirao" readonly="1"/>
+                                        <field name="evidentirao" string="Evidentirao" readonly="1"/>
                                     </group>
                                 </form>
                             </field>
