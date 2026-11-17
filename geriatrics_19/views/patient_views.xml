@@ -149,6 +149,7 @@
                         <group string="Status">
                             <field name="active"/>
                             <field name="deceased"/>
+                            <field name="request_reason_id"/>
                             <field name="dod" invisible="not deceased"/>
 
                             <field name="hospitalization_unit_id"
@@ -216,6 +217,7 @@
                                     <field name="birth_place"/>
                                     <field name="birth_municipalities"/>
                                     <field name="birth_country_id"/>
+                                    <field name="ethnic_group_id"/>
                                 </group>
 
                                 <group string="Porodični podaci">

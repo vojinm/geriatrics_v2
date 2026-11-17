@@ -345,6 +345,18 @@ class MedicalPatient(models.Model):
         string='Zanimanje',
     )
 
+    ethnic_group_id = fields.Many2one(
+        'medical.ethnicity',
+        string='Etnička grupa',
+        index=True,
+    )
+
+    request_reason_id = fields.Many2one(
+        'medical.inpatient.request.reason',
+        string='Razlog zahtjeva za smještaj',
+        index=True,
+    )
+
     is_pensioner = fields.Boolean(
         string='Penzioner',
         default=False,
