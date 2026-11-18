@@ -1,3 +1,11 @@
+import os
+
+MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
+
+if MODE not in ("TEST", "IMPORT"):
+    raise ValueError(f"Nepoznat režim migracije: {MODE}")
+
+print(f"REZIM: {MODE}")
 import csv
 from pathlib import Path
 from collections import Counter
@@ -131,5 +139,9 @@ except Exception:
     print("GRESKA - ROLLBACK izvrsen. Uvoz nije sacuvan.")
     raise
 else:
-    env.cr.commit()
-    print("COMMIT izvrsen - ugovori su trajno sacuvani.")
+    if MODE == "TEST":
+        env.cr.rollback()
+        print("TEST USPJESAN - rollback izvrsen. Podaci nisu sacuvani.")
+    else:
+        env.cr.commit()
+        print("COMMIT izvrsen - ugovori su trajno sacuvani.")
