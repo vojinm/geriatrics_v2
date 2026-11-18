@@ -173,37 +173,43 @@ print("ERRORS:", len(errors))
 for legacy_id, message in errors[:30]:
     print(f"  {legacy_id}: {message}")
 
+expected_missing_patient_ids = {
+    186, 202, 1099, 1345, 1769, 1941, 1964
+}
+
+actual_missing_patient_ids = {
+    legacy_id
+    for legacy_id, message in errors
+    if message == "Patient reference is empty"
+}
+
+unexpected_errors = [
+    (legacy_id, message)
+    for legacy_id, message in errors
+    if message != "Patient reference is empty"
+    or legacy_id not in expected_missing_patient_ids
+]
+
+if (
+    unexpected_errors
+    or actual_missing_patient_ids != expected_missing_patient_ids
+    or stats["created"] != 2430
+):
+    env.cr.rollback()
+    raise ValueError(
+        "MIGRATION VALIDATION FAILED: "
+        f"created={stats['created']}, "
+        f"unexpected_errors={len(unexpected_errors)}, "
+        f"missing_patient_ids={sorted(actual_missing_patient_ids)}"
+    )
+
+print("VALIDATION PASSED")
+print("CREATED:", stats["created"])
+print("PENDING WITHOUT PATIENT:", len(actual_missing_patient_ids))
+
 if MODE == "TEST":
     env.cr.rollback()
-    print("ROLLBACK COMPLETED")
-
+    print("TEST PASSED - ROLLBACK COMPLETED")
 else:
-    expected_missing_patient_ids = {
-        186, 202, 1099, 1345, 1769, 1941, 1964
-    }
-
-    actual_missing_patient_ids = {
-        legacy_id
-        for legacy_id, message in errors
-        if message == "Patient reference is empty"
-    }
-
-    unexpected_errors = [
-        (legacy_id, message)
-        for legacy_id, message in errors
-        if message != "Patient reference is empty"
-        or legacy_id not in expected_missing_patient_ids
-    ]
-
-    if (
-        unexpected_errors
-        or actual_missing_patient_ids != expected_missing_patient_ids
-        or stats["created"] != 2430
-    ):
-        env.cr.rollback()
-        print("IMPORT CANCELLED - VALIDATION FAILED")
-    else:
-        env.cr.commit()
-        print("COMMIT COMPLETED")
-        print("IMPORTED:", stats["created"])
-        print("PENDING WITHOUT PATIENT:", len(actual_missing_patient_ids))
+    env.cr.commit()
+    print("IMPORT PASSED - COMMIT COMPLETED")

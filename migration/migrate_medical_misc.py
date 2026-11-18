@@ -1,7 +1,7 @@
 import csv
 import os
 
-CSV_DIR = "/tmp/geriatrics_migration"
+CSV_DIR = "/mnt/migration"
 
 mode = os.environ.get("GERIATRICS_MIGRATION_MODE")
 assert mode in ("TEST", "IMPORT"), "Rezim mora biti TEST ili IMPORT"

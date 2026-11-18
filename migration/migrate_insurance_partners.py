@@ -1,7 +1,7 @@
 import csv
 import os
 
-CSV_PATH = "/tmp/geriatrics_migration/insurance_partners_utf8.csv"
+CSV_PATH = "/mnt/migration/insurance_partners_utf8.csv"
 TEST_MODE = os.environ.get("GERIATRICS_MIGRATION_MODE") == "TEST"
 
 Partner = env["res.partner"].sudo()

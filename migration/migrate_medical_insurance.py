@@ -2,7 +2,7 @@ import csv
 import os
 from datetime import datetime
 
-CSV_PATH = "/tmp/geriatrics_migration/medical_insurance_utf8.csv"
+CSV_PATH = "/mnt/migration/medical_insurance_utf8.csv"
 TEST_MODE = os.environ.get("GERIATRICS_MIGRATION_MODE") == "TEST"
 
 # Zaštita od slučajnog pokretanja bez definisanog režima.

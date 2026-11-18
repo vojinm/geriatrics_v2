@@ -29,7 +29,7 @@ for filename, field_name, model_name, expected in RELATIONS:
         for record in env[model_name].search([("legacy_id", "!=", False)])
     }
 
-    with open("/tmp/" + filename + ".csv", encoding="utf-8-sig", newline="") as f:
+    with open("/mnt/migration/" + filename + ".csv", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
 
     if len(rows) != expected:

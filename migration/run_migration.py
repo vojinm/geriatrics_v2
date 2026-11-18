@@ -15,6 +15,46 @@ MIGRATION_STEPS = [
     "migrate_tracking_list.py",
 ]
 
+# Plan migracije prema zavisnostima.
+# Redoslijed je preliminaran i mora biti potvrdjen
+# prije automatskog izvrsavanja.
+MIGRATION_PLAN = [
+    # 1. Osnovni kontakti i pacijenti
+    "import_contacts_odoo.py",
+    "import_patients_odoo.py",
+
+    # 2. Porodicne veze i ugovori
+    "import_family_relations_odoo.py",
+    "import_contracts_odoo.py",
+
+    # 3. Bolnicka infrastruktura i hospitalizacije
+    "migrate_hospital_infrastructure.py",
+    "migrate_inpatient_registrations.py",
+
+    # 4. Osiguranje
+    "migrate_insurance_partners.py",
+    "migrate_medical_insurance.py",
+
+    # 5. Konfiguracija i dopunski podaci
+    "migrate_medical_misc.py",
+    "migrate_patient_activities.py",
+    "migrate_patient_activity_rel.py",
+    "migrate_patient_misc_relations.py",
+    "migrate_patient_misc_supplement.py",
+    "migrate_patient_supplement_full.py",
+    "migrate_patient_birth_country_remaining.py",
+
+    # 6. Statusi pacijenata
+    "import_patient_active.py",
+    "import_patient_deceased.py",
+
+    # 7. Tracking
+    "migrate_tracking_list.py",
+
+    # 8. Korekcija tekstualnih podataka
+    "fix_patient_text_encoding.py",
+]
+
 def validate_contracts():
     script_path = MIGRATION_DIR / "validate_contracts_odoo.py"
 
@@ -45,7 +85,7 @@ def main():
 
     missing = []
 
-    for number, script_name in enumerate(MIGRATION_STEPS, start=1):
+    for number, script_name in enumerate(MIGRATION_PLAN, start=1):
         script_path = MIGRATION_DIR / script_name
 
         if script_path.is_file():
@@ -62,7 +102,7 @@ def main():
         print(f"VALIDATION FAILED: {len(missing)} missing scripts")
         raise SystemExit(1)
 
-        print("SCRIPT INVENTORY VALIDATION PASSED")
+    print("SCRIPT INVENTORY VALIDATION PASSED")
 
     validate_contracts()
 

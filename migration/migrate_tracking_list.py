@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from odoo import fields
 
-CSV_PATH = "/tmp/geriatrics_migration/tracking_list.csv"
+CSV_PATH = "/mnt/migration/tracking_list.csv"
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 EXPECTED_COUNT = 33092
 BATCH_SIZE = 500
