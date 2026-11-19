@@ -93,7 +93,12 @@ try:
 
         Contract.create({
             "legacy_id": legacy_id,
-            "name": row["ref"].strip(),
+            "name": (
+                row["ref"].strip()
+                .replace("─ìeka se", "Čeka se")
+                .replace("─îeka se", "Čeka se")
+                .replace("─çeka se", "Čeka se")
+            ),
             "legacy_partner_id": original_partner,
             "patient_id": patient,
             "requester_id": partner_id(

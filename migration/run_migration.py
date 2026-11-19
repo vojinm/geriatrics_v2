@@ -208,6 +208,15 @@ if __name__ == "__main__":
         print("Mode: TEST")
         print("Expected database: geriatrics19_migration_test")
         execute_migration_plan("TEST")
+
+    elif requested_mode == "IMPORT":
+        print("=" * 60)
+        print("GERIJATRIJA - MIGRATION IMPORT")
+        print("=" * 60)
+        print("Mode: IMPORT")
+        print("Expected database: geriatrics19_migration_test")
+        execute_migration_plan("IMPORT")
+
     else:
         raise ValueError(
             f"Unsupported controller mode: {requested_mode}. "
