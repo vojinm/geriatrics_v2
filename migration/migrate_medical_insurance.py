@@ -133,7 +133,9 @@ try:
     print("Originalni datumi postavljeni:", len(original_dates))
     print("Rezim:", "TEST" if TEST_MODE else "IMPORT")
 
-    if TEST_MODE:
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - TRANSACTION DEFERRED")
+    elif TEST_MODE:
         env.cr.rollback()
         print("ROLLBACK - testni podaci nisu sacuvani")
     else:
@@ -141,6 +143,9 @@ try:
         print("COMMIT - osiguranja su sacuvana")
 
 except Exception:
-    env.cr.rollback()
-    print("GRESKA - izvrsen ROLLBACK")
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - ERROR, TRANSACTION DEFERRED")
+    else:
+        env.cr.rollback()
+        print("GRESKA - izvrsen ROLLBACK")
     raise

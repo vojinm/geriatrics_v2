@@ -26,11 +26,11 @@ def to_bool(value):
 with open(CSV_PATH, encoding="utf-8-sig", newline="") as file:
     rows = list(csv.DictReader(file))
 
-assert len(rows) == 84, f"Ocekivano 84 kontakta, pronadjeno {len(rows)}"
+assert len(rows) == 85, f"Ocekivano 85 kontakata, pronadjeno {len(rows)}"
 
 legacy_ids = [int(row["legacy_id"]) for row in rows]
 
-assert len(set(legacy_ids)) == 84, "Duplirani legacy_id u CSV-u"
+assert len(set(legacy_ids)) == 85, "Duplirani legacy_id u CSV-u"
 assert all(value > 0 for value in legacy_ids), "Neispravan legacy_id"
 
 created = 0
@@ -68,7 +68,9 @@ try:
     print("Preskoceno (vec postoji):", skipped)
     print("Rezim:", "TEST" if TEST_MODE else "IMPORT")
 
-    if TEST_MODE:
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - TRANSACTION DEFERRED")
+    elif TEST_MODE:
         env.cr.rollback()
         print("ROLLBACK - testni podaci nisu sacuvani")
     else:
@@ -76,6 +78,9 @@ try:
         print("COMMIT - kontakti su sacuvani")
 
 except Exception:
-    env.cr.rollback()
-    print("GRESKA - izvrsen ROLLBACK")
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - ERROR, TRANSACTION DEFERRED")
+    else:
+        env.cr.rollback()
+        print("GRESKA - izvrsen ROLLBACK")
     raise

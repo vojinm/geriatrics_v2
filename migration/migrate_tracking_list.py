@@ -190,7 +190,10 @@ def migrate(env):
         print("empty_info:", empty_info_actual)
         print("errors: 0")
 
-        if MODE == "TEST":
+        if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+            print("\nCONTROLLER MODE - TRANSACTION DEFERRED")
+
+        elif MODE == "TEST":
             env.cr.rollback()
             print("\nROLLBACK COMPLETED")
             print("DATABASE UNCHANGED")
@@ -201,8 +204,11 @@ def migrate(env):
             print("IMPORTED:", created)
 
     except Exception:
-        env.cr.rollback()
-        print("\nROLLBACK: GRESKA TOKOM MIGRACIJE")
+        if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+            print("\nCONTROLLER MODE - ERROR, TRANSACTION DEFERRED")
+        else:
+            env.cr.rollback()
+            print("\nROLLBACK: GRESKA TOKOM MIGRACIJE")
         raise
 
 

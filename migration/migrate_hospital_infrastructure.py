@@ -400,7 +400,9 @@ def migrate(env):
     print("\nPROVJERE USPJESNE")
     print("Ukupno migrirano:", sum(len(m) for m in maps.values()))
 
-    if MODE == "TEST":
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - TRANSACTION DEFERRED")
+    elif MODE == "TEST":
         env.cr.rollback()
         print("ROLLBACK: promjene nisu sacuvane")
     else:

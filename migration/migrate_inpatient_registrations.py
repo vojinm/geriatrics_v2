@@ -195,7 +195,8 @@ if (
     or actual_missing_patient_ids != expected_missing_patient_ids
     or stats["created"] != 2430
 ):
-    env.cr.rollback()
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") != "1":
+        env.cr.rollback()
     raise ValueError(
         "MIGRATION VALIDATION FAILED: "
         f"created={stats['created']}, "
@@ -207,7 +208,9 @@ print("VALIDATION PASSED")
 print("CREATED:", stats["created"])
 print("PENDING WITHOUT PATIENT:", len(actual_missing_patient_ids))
 
-if MODE == "TEST":
+if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+    print("CONTROLLER MODE - TRANSACTION DEFERRED")
+elif MODE == "TEST":
     env.cr.rollback()
     print("TEST PASSED - ROLLBACK COMPLETED")
 else:

@@ -117,7 +117,9 @@ try:
     print("TOTAL SKIPPED:", skipped)
     print("MODE:", mode)
 
-    if mode == "TEST":
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - TRANSACTION DEFERRED")
+    elif mode == "TEST":
         env.cr.rollback()
         print("ROLLBACK COMPLETED")
     else:
@@ -125,6 +127,9 @@ try:
         print("COMMIT COMPLETED")
 
 except Exception:
-    env.cr.rollback()
-    print("ROLLBACK DUE TO ERROR")
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - ERROR, TRANSACTION DEFERRED")
+    else:
+        env.cr.rollback()
+        print("ROLLBACK DUE TO ERROR")
     raise

@@ -18,7 +18,7 @@ pairs = [
 
 assert len(set(pairs)) == 289, "CSV sadrzi duplirane veze"
 
-Patient = env["medical.patient"].sudo()
+Patient = env["medical.patient"].sudo().with_context(active_test=False)
 Activity = env["medical.patient.activities"].sudo()
 
 patients = Patient.search([
@@ -55,7 +55,9 @@ print("Kreirano:", created)
 print("Preskoceno:", skipped)
 print("Rezim:", mode)
 
-if mode == "TEST":
+if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+    print("CONTROLLER MODE - TRANSACTION DEFERRED")
+elif mode == "TEST":
     env.cr.rollback()
     print("ROLLBACK - testne veze nisu sacuvane")
 else:

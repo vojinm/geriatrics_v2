@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 from datetime import datetime
 
@@ -54,6 +56,87 @@ MIGRATION_PLAN = [
     # 8. Korekcija tekstualnih podataka
     "fix_patient_text_encoding.py",
 ]
+
+def execute_migration_step(script_name):
+    script_path = MIGRATION_DIR / script_name
+
+    if not script_path.is_file():
+        raise FileNotFoundError(
+            f"Missing migration script: {script_path}"
+        )
+
+    print(f"\nExecuting: {script_name}", flush=True)
+
+    source = script_path.read_text(encoding="utf-8-sig")
+
+    namespace = {
+        "env": env,
+        "__name__": "__migration_step__",
+        "__file__": str(script_path),
+    }
+
+    exec(
+        compile(source, str(script_path), "exec"),
+        namespace,
+    )
+
+    print(f"Completed: {script_name}", flush=True)
+
+def execute_migration_plan(mode):
+    if mode not in ("TEST", "IMPORT"):
+        raise ValueError(f"Invalid migration mode: {mode}")
+
+    allowed_database = "geriatrics19_migration_test"
+    current_database = env.cr.dbname
+
+    if current_database != allowed_database:
+        raise ValueError(
+            f"SAFETY STOP: Migration is allowed only on "
+            f"{allowed_database}. Current database: {current_database}"
+        )
+
+    print(f"\nMIGRATION MODE: {mode}", flush=True)
+    print(f"DATABASE: {current_database}", flush=True)
+
+    previous_environment = {
+        name: os.environ.get(name)
+        for name in (
+            "GERIATRICS_CONTROLLER_MODE",
+            "GERIATRICS_MIGRATION_MODE",
+            "MIGRATION_MODE",
+        )
+    }
+
+    try:
+        os.environ["GERIATRICS_CONTROLLER_MODE"] = "1"
+        os.environ["GERIATRICS_MIGRATION_MODE"] = mode
+        os.environ["MIGRATION_MODE"] = mode
+
+        for number, script_name in enumerate(MIGRATION_PLAN, start=1):
+            print(
+                f"\nSTEP {number}/{len(MIGRATION_PLAN)}",
+                flush=True,
+            )
+            execute_migration_step(script_name)
+
+        if mode == "TEST":
+            env.cr.rollback()
+            print("\nTEST COMPLETED - FULL ROLLBACK", flush=True)
+        else:
+            env.cr.commit()
+            print("\nIMPORT COMPLETED - FULL COMMIT", flush=True)
+
+    except BaseException:
+        env.cr.rollback()
+        print("\nMIGRATION FAILED - FULL ROLLBACK", flush=True)
+        raise
+
+    finally:
+        for name, previous_value in previous_environment.items():
+            if previous_value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = previous_value
 
 def validate_contracts():
     script_path = MIGRATION_DIR / "validate_contracts_odoo.py"
@@ -112,4 +195,21 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    requested_mode = os.environ.get(
+        "GERIATRICS_RUN_MODE", "VALIDATION"
+    ).upper()
+
+    if requested_mode == "VALIDATION":
+        main()
+    elif requested_mode == "TEST":
+        print("=" * 60)
+        print("GERIJATRIJA - MIGRATION INTEGRATION TEST")
+        print("=" * 60)
+        print("Mode: TEST")
+        print("Expected database: geriatrics19_migration_test")
+        execute_migration_plan("TEST")
+    else:
+        raise ValueError(
+            f"Unsupported controller mode: {requested_mode}. "
+            "Only VALIDATION and TEST are allowed."
+        )

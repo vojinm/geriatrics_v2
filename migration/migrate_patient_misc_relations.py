@@ -13,7 +13,7 @@ mode = os.environ.get("MIGRATION_MODE", "TEST").upper()
 if mode not in ("TEST", "IMPORT"):
     raise ValueError("MIGRATION_MODE must be TEST or IMPORT")
 
-Patient = env["medical.patient"]
+Patient = env["medical.patient"].sudo().with_context(active_test=False)
 
 patients = {
     record.legacy_id: record
@@ -105,7 +105,9 @@ for patient_id, field_name, config_ids in operations:
 print(f"UPDATED PATIENT-FIELD GROUPS: {updated}")
 print(f"UNCHANGED PATIENT-FIELD GROUPS: {unchanged}")
 
-if mode == "TEST":
+if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+    print("CONTROLLER MODE - TRANSACTION DEFERRED")
+elif mode == "TEST":
     env.cr.rollback()
     print("TEST COMPLETED - ROLLBACK")
 else:

@@ -135,11 +135,16 @@ try:
     print(f"Statusi: {dict(states)}")
 
 except Exception:
-    env.cr.rollback()
-    print("GRESKA - ROLLBACK izvrsen. Uvoz nije sacuvan.")
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - ERROR, TRANSACTION DEFERRED")
+    else:
+        env.cr.rollback()
+        print("GRESKA - ROLLBACK izvrsen. Uvoz nije sacuvan.")
     raise
 else:
-    if MODE == "TEST":
+    if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+        print("CONTROLLER MODE - TRANSACTION DEFERRED")
+    elif MODE == "TEST":
         env.cr.rollback()
         print("TEST USPJESAN - rollback izvrsen. Podaci nisu sacuvani.")
     else:

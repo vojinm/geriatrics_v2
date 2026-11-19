@@ -61,7 +61,9 @@ print("Kreirano:", created)
 print("Preskoceno:", skipped)
 print("Rezim:", mode)
 
-if mode == "TEST":
+if os.environ.get("GERIATRICS_CONTROLLER_MODE") == "1":
+    print("CONTROLLER MODE - TRANSACTION DEFERRED")
+elif mode == "TEST":
     env.cr.rollback()
     print("ROLLBACK - testni podaci nisu sacuvani")
 else:
