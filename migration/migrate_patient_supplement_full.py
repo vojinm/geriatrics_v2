@@ -9,31 +9,44 @@ MODE = os.environ.get('MIGRATION_MODE', 'TEST').upper()
 DB = env.cr.dbname
 if MODE not in ('TEST', 'IMPORT'):
     raise ValueError('MIGRATION_MODE must be TEST or IMPORT')
-if DB not in (
-    'geriatrics19_supplement_test',
-    'geriatrics19_dev',
-    'geriatrics19_migration_test',
-):
-    raise ValueError('Safety stop: database not allowed: %s' % DB)
+if DB != 'geriatrics19_migration_test':
+    raise ValueError(
+        'Safety stop: migration allowed only on '
+        'geriatrics19_migration_test; current DB: %s' % DB
+    )
 
-BASE = '/mnt/migration'
+BASE = os.environ.get(
+    "GERIATRICS_CSV_DIR",
+    "/mnt/migration",
+)
 def read_csv(name):
     with open(os.path.join(BASE, name), encoding='utf-8-sig', newline='') as f:
         return list(csv.DictReader(f))
 
 rows = read_csv('patient_supplement.csv')
 country_rows = read_csv('patient_birth_country_codes.csv')
-if len(rows) != 2394:
-    raise ValueError('Expected 2394 patients; found %d' % len(rows))
-if len({r['legacy_id'] for r in rows}) != len(rows):
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError('patient_supplement.csv is empty')
+
+legacy_ids = [int(r['legacy_id']) for r in rows]
+
+if any(legacy_id <= 0 for legacy_id in legacy_ids):
+    raise ValueError('Invalid patient legacy_id')
+
+if len(set(legacy_ids)) != EXPECTED_COUNT:
     raise ValueError('Duplicate patient legacy_id in CSV')
 
 Patient = env['medical.patient'].sudo().with_context(active_test=False)
 Partner = env['res.partner'].sudo().with_context(active_test=False)
 patients = Patient.search([('legacy_id', 'in', [int(r['legacy_id']) for r in rows])])
 pmap = {p.legacy_id: p for p in patients}
-if len(pmap) != 2394:
-    raise ValueError('Matched %d patients, expected 2394' % len(pmap))
+if set(pmap) != set(legacy_ids):
+    raise ValueError(
+        'Missing patients: %s'
+        % sorted(set(legacy_ids) - set(pmap))
+    )
 
 old_countries = {}
 for r in country_rows:
@@ -69,8 +82,8 @@ for r in rows:
                            ('blood_type', blood_allowed), ('rh', rh_allowed)]:
         if r[field].strip() and r[field].strip() not in allowed:
             raise ValueError('Patient %s: invalid %s=%r' % (lid, field, r[field]))
-    if r['education_level'].strip() and r['education_level'].strip() not in education_allowed | {'7'}:
-        raise ValueError('Patient %s: unknown education_level=%r' % (lid, r['education_level']))
+    if r['education'].strip() and r['education'].strip() not in education_allowed:
+        raise ValueError('Patient %s: unknown education=%r' % (lid, r['education']))
 
 def parse_bool(value, lid):
     v = value.strip().lower()
@@ -87,6 +100,15 @@ patient_text = [
     'short_goals', 'long_goals', 'family_plan', 'freetime_plan',
     'critical_info', 'general_info',
 ]
+
+EXPECTED_SEX = sum(
+    bool(r['sex'].strip()) for r in rows
+)
+
+EXPECTED_BIRTH_PLACE = sum(
+    bool(r['birth_place'].strip()) for r in rows
+)
+
 counts = Counter()
 try:
     for r in rows:
@@ -101,11 +123,9 @@ try:
             if r[field].strip():
                 pv[field] = r[field].strip()
                 counts[field] += 1
-        if r['education_level'].strip() in education_allowed:
-            pv['education'] = r['education_level'].strip()
+        if r['education'].strip() in education_allowed:
+            pv['education'] = r['education'].strip()
             counts['education'] += 1
-        elif r['education_level'].strip() == '7':
-            counts['education_7_skipped'] += 1
         if r['is_pensioner'].strip():
             pv['is_pensioner'] = parse_bool(r['is_pensioner'], r['legacy_id'])
             counts['is_pensioner'] += 1
@@ -129,8 +149,21 @@ try:
         if partner_vals:
             p.partner_id.write(partner_vals)
         counts['processed'] += 1
-    if counts['processed'] != 2394 or counts['sex'] != 2394 or counts['birth_place'] != 2329:
-        raise ValueError('Unexpected processing counts: %s' % dict(counts))
+    if (
+        counts['processed'] != EXPECTED_COUNT
+        or counts['sex'] != EXPECTED_SEX
+        or counts['birth_place'] != EXPECTED_BIRTH_PLACE
+    ):
+        raise ValueError(
+            'Unexpected processing counts: %s; '
+            'expected processed=%d, sex=%d, birth_place=%d'
+            % (
+                dict(counts),
+                EXPECTED_COUNT,
+                EXPECTED_SEX,
+                EXPECTED_BIRTH_PLACE,
+            )
+        )
     print('PROCESSED:', counts['processed'])
     for k in sorted(counts):
         if k != 'processed':
