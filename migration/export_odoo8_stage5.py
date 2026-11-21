@@ -15,6 +15,7 @@ FIELDS = [
     'ses_notes', 'current_functioning', 'adaptation_help', 'short_goals',
     'long_goals', 'family_plan', 'freetime_plan', 'critical_info',
     'general_info', 'blood_type', 'rh', 'id_expiration_date', 'birth_place',
+    'dod',
 ]
 
 EXPORTS = {

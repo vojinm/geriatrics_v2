@@ -126,6 +126,14 @@ try:
         if r['education'].strip() in education_allowed:
             pv['education'] = r['education'].strip()
             counts['education'] += 1
+        if r['dod'].strip():
+            from datetime import datetime
+
+            death_date = r['dod'].strip()
+            datetime.strptime(death_date, '%Y-%m-%d')
+
+            pv['dod'] = death_date + ' 00:00:00'
+            counts['dod'] += 1
         if r['is_pensioner'].strip():
             pv['is_pensioner'] = parse_bool(r['is_pensioner'], r['legacy_id'])
             counts['is_pensioner'] += 1
