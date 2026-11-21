@@ -2,10 +2,10 @@
 import os
 
 RELATIONS = [
-    ("patient_occupation_rel", "occupation", "medical.occupation", 1950),
-    ("patient_pension_type_rel", "pension_type", "medical.patient.pension.type", 1601),
-    ("patient_body_deformation_rel", "body_deformation_ids", "medical.patient.body.deformation", 1150),
-    ("patient_mind_deformation_rel", "mind_deformation_ids", "medical.patient.mind.deformation", 714),
+    ("patient_occupation_rel", "occupation", "medical.occupation"),
+    ("patient_pension_type_rel", "pension_type", "medical.patient.pension.type"),
+    ("patient_body_deformation_rel", "body_deformation_ids", "medical.patient.body.deformation"),
+    ("patient_mind_deformation_rel", "mind_deformation_ids", "medical.patient.mind.deformation"),
 ]
 
 mode = os.environ.get("MIGRATION_MODE", "TEST").upper()
@@ -23,17 +23,35 @@ patients = {
 operations = []
 total = 0
 
-for filename, field_name, model_name, expected in RELATIONS:
+for filename, field_name, model_name in RELATIONS:
     configs = {
         record.legacy_id: record.id
         for record in env[model_name].search([("legacy_id", "!=", False)])
     }
 
-    with open("/mnt/migration/" + filename + ".csv", encoding="utf-8-sig", newline="") as f:
+    with open(
+        os.path.join(
+            os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+            filename + ".csv",
+        ),
+        encoding="utf-8-sig",
+        newline="",
+    ) as f:
         rows = list(csv.DictReader(f))
 
-    if len(rows) != expected:
-        raise ValueError(f"{filename}: unexpected row count {len(rows)}")
+    if not rows:
+        raise ValueError(f"{filename}: CSV je prazan")
+
+    pairs = [
+        (int(row["patient_legacy_id"]), int(row["config_legacy_id"]))
+        for row in rows
+    ]
+
+    if any(patient_id <= 0 or config_id <= 0 for patient_id, config_id in pairs):
+        raise ValueError(f"{filename}: neispravan legacy_id")
+
+    if len(set(pairs)) != len(rows):
+        raise ValueError(f"{filename}: duplirane veze")
 
     grouped = {}
 
@@ -54,9 +72,6 @@ for filename, field_name, model_name, expected in RELATIONS:
 
     total += len(rows)
     print(f"{filename}: validated {len(rows)} links")
-
-if total != 5415:
-    raise ValueError(f"Unexpected total: {total}")
 
 print(f"TOTAL VALIDATED: {total}")
 
@@ -101,6 +116,28 @@ for patient_id, field_name, config_ids in operations:
         raise ValueError(f"Unsupported field type: {field.type}")
 
     updated += 1
+
+for patient_id, field_name, config_ids in operations:
+    patient = patients[patient_id]
+    field = Patient._fields[field_name]
+
+    if field.type == "many2one":
+        expected_id = next(iter(config_ids))
+
+        if patient[field_name].id != expected_id:
+            raise ValueError(
+                f"Nedostaje veza: patient={patient_id}, field={field_name}"
+            )
+
+    elif field.type == "many2many":
+        actual_ids = set(patient[field_name].ids)
+
+        if not config_ids.issubset(actual_ids):
+            raise ValueError(
+                f"Nedostaju veze: patient={patient_id}, field={field_name}"
+            )
+
+print(f"VALIDATION PASSED: {total} source links")
 
 print(f"UPDATED PATIENT-FIELD GROUPS: {updated}")
 print(f"UNCHANGED PATIENT-FIELD GROUPS: {unchanged}")

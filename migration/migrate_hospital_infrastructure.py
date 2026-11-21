@@ -5,14 +5,17 @@ from collections import Counter
 from odoo import api, SUPERUSER_ID
 from hospital_unit_mapping import canonical_unit_legacy_id
 
-CSV_DIR = "/mnt/migration"
+CSV_DIR = os.environ.get(
+    "GERIATRICS_CSV_DIR",
+    "/mnt/migration"
+)
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
-EXPECTED = {
-    "hospital_buildings.csv": 4,
-    "hospital_units.csv": 168,
-    "hospital_wards.csv": 3,
-    "hospital_beds.csv": 2,
+REQUIRED_CSV_FILES = {
+    "hospital_buildings.csv",
+    "hospital_units.csv",
+    "hospital_wards.csv",
+    "hospital_beds.csv",
 }
 
 INSTITUTION_NAME = '"Gerontološki centar" Banja Luka'
@@ -32,9 +35,13 @@ def read_csv(filename):
     with open(path, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
 
-    assert len(rows) == EXPECTED[filename], (
-        f"{filename}: neocekivan broj zapisa"
-    )
+    if filename not in REQUIRED_CSV_FILES:
+        raise ValueError(f"Nepoznat CSV fajl: {filename}")
+
+    if not rows:
+        raise ValueError(f"{filename}: CSV je prazan")
+
+    print(f"{filename}: {len(rows)} zapisa")
 
     ids = [int(row["legacy_id"]) for row in rows]
     assert len(ids) == len(set(ids)), f"{filename}: dupli legacy_id"

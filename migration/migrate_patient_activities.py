@@ -1,19 +1,37 @@
 ﻿import csv
 import os
 
-CSV_PATH = "/mnt/migration/medical_patient_activities_utf8.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "medical_patient_activities_utf8.csv",
+)
 
 mode = os.environ.get("GERIATRICS_MIGRATION_MODE")
 assert mode in ("TEST", "IMPORT"), "Rezim mora biti TEST ili IMPORT"
 
 Activity = env["medical.patient.activities"].sudo()
 
+existing_count = Activity.with_context(
+    active_test=False
+).search_count([])
+
+if existing_count:
+    raise ValueError(
+        f"Ciljna tabela aktivnosti nije prazna: {existing_count} zapisa"
+    )
 with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
     rows = list(csv.DictReader(f))
 
-assert len(rows) == 94, "Neocekivan broj aktivnosti"
-assert len({int(r["legacy_id"]) for r in rows}) == 94
-assert all(r["name"].strip() for r in rows)
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("medical_patient_activities_utf8.csv je prazan")
+
+legacy_ids = [int(r["legacy_id"]) for r in rows]
+
+assert all(legacy_id > 0 for legacy_id in legacy_ids)
+assert len(set(legacy_ids)) == EXPECTED_COUNT, "Duplirani legacy_id"
+assert all(r["name"].strip() for r in rows), "Prazan naziv aktivnosti"
 
 def value_or_false(value):
     return value if value else False
@@ -55,6 +73,21 @@ for row in rows:
     )
 
     created += 1
+
+if created != EXPECTED_COUNT:
+    raise ValueError(
+        f"Broj kreiranih aktivnosti nije ispravan: "
+        f"{created}/{EXPECTED_COUNT}"
+    )
+
+actual_ids = set(
+    Activity.with_context(active_test=False)
+    .search([("legacy_id", "in", legacy_ids)])
+    .mapped("legacy_id")
+)
+
+if actual_ids != set(legacy_ids):
+    raise ValueError("Nisu migrirane sve aktivnosti iz CSV-a")
 
 print("CSV aktivnosti:", len(rows))
 print("Kreirano:", created)

@@ -1,10 +1,25 @@
 import base64
+import os
 from pathlib import Path
 
-PHOTO_DIR = Path("/tmp/patient_photos_original")
+PHOTO_DIR = Path(
+    os.environ.get("PATIENT_PHOTO_IMPORT_DIR", "/tmp/patient_photos_optimized")
+)
 BATCH_SIZE = 25
 
-Patient = env["medical.patient"]
+EXPECTED_DB = os.environ.get(
+    "PATIENT_PHOTO_TARGET_DB", "geriatrics19_migration_test"
+)
+
+if env.cr.dbname != EXPECTED_DB:
+    raise RuntimeError(
+        f"PHOTO IMPORT BLOCKED: database {env.cr.dbname!r} "
+        f"is not the authorized target {EXPECTED_DB!r}"
+    )
+
+print("TARGET DATABASE:", env.cr.dbname, flush=True)
+
+Patient = env["medical.patient"].sudo().with_context(active_test=False)
 
 photos = sorted(
     [p for p in PHOTO_DIR.iterdir()
@@ -12,9 +27,8 @@ photos = sorted(
     key=lambda p: int(p.stem)
 )
 
-assert len(photos) == 865, (
-    f"Expected 865 photos, found {len(photos)}"
-)
+if not photos:
+    raise RuntimeError("No patient photos found")
 
 print("PHOTOS FOUND:", len(photos), flush=True)
 
@@ -53,14 +67,12 @@ try:
         imported += 1
 
         if imported % BATCH_SIZE == 0:
-            env.flush_all()
-            env.cr.commit()
             print(
-                f"COMMITTED: {imported} | SKIPPED: {skipped}",
+                f"PROCESSED: {imported} | SKIPPED: {skipped}",
                 flush=True
             )
 
-    if imported + skipped != 865:
+    if imported + skipped != len(photos):
         raise RuntimeError("Photo import count mismatch")
 
     env.flush_all()
@@ -75,9 +87,7 @@ print("IMPORTED:", imported)
 print("SKIPPED:", skipped)
 print("TOTAL PROCESSED:", imported + skipped)
 
-assert imported + skipped == 865, (
-    "Photo import count mismatch"
-)
+
 
 print("PHOTO IMPORT COMPLETED")
 

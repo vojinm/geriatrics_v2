@@ -1,7 +1,10 @@
 import csv
 import os
 
-CSV_PATH = "/mnt/migration/insurance_partners_utf8.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "insurance_partners_utf8.csv",
+)
 TEST_MODE = os.environ.get("GERIATRICS_MIGRATION_MODE") == "TEST"
 
 Partner = env["res.partner"].sudo()
@@ -26,11 +29,12 @@ def to_bool(value):
 with open(CSV_PATH, encoding="utf-8-sig", newline="") as file:
     rows = list(csv.DictReader(file))
 
-assert len(rows) == 85, f"Ocekivano 85 kontakata, pronadjeno {len(rows)}"
+if not rows:
+    raise ValueError("insurance_partners_utf8.csv je prazan")
 
 legacy_ids = [int(row["legacy_id"]) for row in rows]
 
-assert len(set(legacy_ids)) == 85, "Duplirani legacy_id u CSV-u"
+assert len(set(legacy_ids)) == len(rows), "Duplirani legacy_id u CSV-u"
 assert all(value > 0 for value in legacy_ids), "Neispravan legacy_id"
 
 created = 0
@@ -62,6 +66,20 @@ try:
 
         Partner.create(values)
         created += 1
+
+    missing_ids = [
+        legacy_id
+        for legacy_id in legacy_ids
+        if not Partner.search_count([("legacy_id", "=", legacy_id)])
+    ]
+
+    if missing_ids:
+        raise ValueError(
+            f"Nedostaju osiguravajuci partneri: {missing_ids}"
+        )
+
+    if created + skipped != len(rows):
+        raise ValueError("Broj obradjenih partnera nije ispravan")
 
     print("CSV kontakata:", len(rows))
     print("Kreirano:", created)

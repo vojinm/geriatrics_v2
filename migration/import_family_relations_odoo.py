@@ -4,8 +4,31 @@ import os
 import unicodedata
 from pathlib import Path
 
-CSV_PATH = Path("/mnt/migration/family_relations_correct.csv")
-EXPECTED_COUNT = 5226
+CSV_PATH = Path(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration")
+) / "family_relations_correct.csv"
+with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
+    source_rows = list(csv.DictReader(file))
+
+EXPECTED_COUNT = len(source_rows)
+EXPECTED_WITHOUT_PARTNER = sum(
+    1
+    for row in source_rows
+    if not row["partner_legacy_id"].strip()
+)
+
+print(f"EXPECTED WITHOUT MAIN PARTNER: {EXPECTED_WITHOUT_PARTNER}")
+if EXPECTED_COUNT == 0:
+    raise ValueError("family_relations_correct.csv je prazan")
+
+legacy_ids = [int(row["legacy_id"]) for row in source_rows]
+
+if len(set(legacy_ids)) != EXPECTED_COUNT:
+    raise ValueError(
+        "Duplirani legacy_id u family_relations_correct.csv"
+    )
+
+print(f"EXPECTED FAMILY RELATIONS: {EXPECTED_COUNT}")
 
 Partner = env["res.partner"].sudo().with_context(active_test=False)
 Relation = env["geriatrics.family.relation"].sudo()
@@ -141,8 +164,11 @@ with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
 if created != EXPECTED_COUNT:
     raise ValueError(f"Uvezeno {created}, ocekivano {EXPECTED_COUNT}")
 
-if without_partner != 21:
-    raise ValueError(f"Bez glavnog kontakta: {without_partner}")
+if without_partner != EXPECTED_WITHOUT_PARTNER:
+    raise ValueError(
+        f"Bez glavnog kontakta: {without_partner}, "
+        f"ocekivano {EXPECTED_WITHOUT_PARTNER}"
+    )
 
 print(f"PROVJERA USPJESNA: {created} veza.")
 print(f"Klasifikovano: {classified}")

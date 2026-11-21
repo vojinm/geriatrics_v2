@@ -2,8 +2,26 @@ import csv
 import os
 from pathlib import Path
 
-CSV_PATH = Path("/mnt/migration/patients.csv")
-EXPECTED_COUNT = 2394
+CSV_PATH = Path(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration")
+) / "patients.csv"
+with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
+    rows = list(csv.DictReader(file))
+
+EXPECTED_COUNT = len(rows)
+EXPECTED_BIRTHDATES = sum(
+    1 for row in rows if row["dob"].strip()
+)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("patients.csv je prazan")
+
+legacy_ids = [int(row["legacy_id"]) for row in rows]
+
+if len(set(legacy_ids)) != EXPECTED_COUNT:
+    raise ValueError("Duplirani legacy_id u patients.csv")
+
+print(f"EXPECTED PATIENTS: {EXPECTED_COUNT}")
 
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
@@ -67,18 +85,40 @@ if created != EXPECTED_COUNT:
     )
 
 print(f"PROVJERA USPJESNA: {created} pacijenata.")
-birthdate_count = Partner.search_count([
-    ("legacy_id", "in", [
-        int(row["partner_legacy_id"])
-        for row in csv.DictReader(
-            CSV_PATH.open("r", encoding="utf-8-sig", newline="")
+birthdate_count = 0
+
+for row in rows:
+    partner_legacy_id = int(row["partner_legacy_id"])
+    expected_dob = row["dob"].strip()
+
+    partner = Partner.search([
+        ("legacy_id", "=", partner_legacy_id)
+    ], limit=1)
+
+    if not partner:
+        raise ValueError(
+            f"Kontakt nije pronadjen: {partner_legacy_id}"
         )
-    ]),
-    ("birthdate", "!=", False),
-])
-if birthdate_count != EXPECTED_COUNT:
+
+    actual_dob = (
+        str(partner.birthdate)
+        if partner.birthdate
+        else ""
+    )
+
+    if expected_dob and actual_dob != expected_dob:
+        raise ValueError(
+            f"Datum rodjenja nije ispravan za kontakt "
+            f"{partner_legacy_id}: CSV={expected_dob}, "
+            f"Odoo={actual_dob}"
+        )
+
+    if expected_dob:
+        birthdate_count += 1
+
+if birthdate_count != EXPECTED_BIRTHDATES:
     raise ValueError(
-        f"Datumi rodjenja: {birthdate_count} od {EXPECTED_COUNT}"
+        f"Datumi rodjenja: {birthdate_count} od {EXPECTED_BIRTHDATES}"
     )
 
 print(f"DATUMI RODJENJA OK: {birthdate_count}")

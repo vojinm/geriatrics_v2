@@ -1,7 +1,10 @@
 import csv
 import os
 
-CSV_PATH = "/mnt/migration/patient_misc_supplement.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "patient_misc_supplement.csv",
+)
 MODE = os.environ.get("MIGRATION_MODE", "TEST").upper()
 
 if MODE not in ("TEST", "IMPORT"):
@@ -12,10 +15,14 @@ Patient = env["medical.patient"].sudo().with_context(active_test=False)
 with open(CSV_PATH, newline="", encoding="utf-8-sig") as file:
     rows = list(csv.DictReader(file))
 
-if len(rows) != 2394:
-    raise ValueError(f"Ocekivano 2394 pacijenta, pronadjeno {len(rows)}")
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("patient_misc_supplement.csv je prazan")
 
 patient_ids = [int(row["legacy_id"]) for row in rows]
+if any(legacy_id <= 0 for legacy_id in patient_ids):
+    raise ValueError("Neispravan legacy_id pacijenta")
 
 if len(patient_ids) != len(set(patient_ids)):
     raise ValueError("Duplirani legacy_id u CSV-u")
@@ -61,6 +68,14 @@ if set(reason_map) != reason_ids:
         f"Nedostaju razlozi zahtjeva: {sorted(reason_ids - set(reason_map))}"
     )
 
+EXPECTED_ETHNIC = sum(
+    bool(row["ethnic_group_id"].strip()) for row in rows
+)
+
+EXPECTED_REASON = sum(
+    bool(row["request_reason_id"].strip()) for row in rows
+)
+
 ethnic_count = 0
 reason_count = 0
 updated_count = 0
@@ -85,10 +100,41 @@ try:
         if reason_id:
             reason_count += 1
 
-    if ethnic_count != 929 or reason_count != 2363:
+    if updated_count != EXPECTED_COUNT:
         raise ValueError(
-            f"Neocekivani brojevi: ethnic={ethnic_count}, reason={reason_count}"
+            f"Obradjeno {updated_count}/{EXPECTED_COUNT} pacijenata"
         )
+
+    if ethnic_count != EXPECTED_ETHNIC or reason_count != EXPECTED_REASON:
+        raise ValueError(
+            "Broj migriranih vrijednosti ne odgovara CSV-u: "
+            f"ethnic={ethnic_count}/{EXPECTED_ETHNIC}, "
+            f"reason={reason_count}/{EXPECTED_REASON}"
+        )
+
+    for row in rows:
+        patient = patient_map[int(row["legacy_id"])]
+
+        expected_ethnic = (
+            ethnic_map[int(row["ethnic_group_id"])]
+            if row["ethnic_group_id"] else False
+        )
+        expected_reason = (
+            reason_map[int(row["request_reason_id"])]
+            if row["request_reason_id"] else False
+        )
+
+        if (patient.ethnic_group_id.id or False) != expected_ethnic:
+            raise ValueError(
+                f"Pacijent {row['legacy_id']}: ethnic_group_id nije ispravan"
+            )
+
+        if (patient.request_reason_id.id or False) != expected_reason:
+            raise ValueError(
+                f"Pacijent {row['legacy_id']}: request_reason_id nije ispravan"
+            )
+
+    print("VALIDATION PASSED:", EXPECTED_COUNT)
 
     print(f"Obradjeno pacijenata: {updated_count}")
     print(f"Etnicka grupa: {ethnic_count}")

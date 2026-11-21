@@ -1,12 +1,25 @@
-﻿import base64
+import base64
 import hashlib
 import os
 from pathlib import Path
 
 import psycopg2
 
-OUTPUT = Path("/tmp/patient_photos_original")
+OUTPUT = Path(
+    os.environ.get("PATIENT_PHOTO_EXPORT_DIR", "/tmp/patient_photos_original")
+)
 OUTPUT.mkdir(parents=True, exist_ok=True)
+
+existing_photos = [
+    p for p in OUTPUT.iterdir()
+    if p.is_file() and p.suffix.lower() in (".jpg", ".png")
+]
+
+if existing_photos:
+    raise RuntimeError(
+        f"PHOTO EXPORT BLOCKED: {len(existing_photos)} existing photos "
+        f"in {OUTPUT}. Use a fresh empty directory for each migration."
+    )
 
 conn = psycopg2.connect(
     host="docker-db-1",
@@ -84,7 +97,25 @@ print("ERRORS:", len(errors))
 for patient_id, message in errors[:20]:
     print(f"ERROR patient {patient_id}: {message}")
 
-if exported + skipped != 865 or errors:
+with psycopg2.connect(
+    host="docker-db-1",
+    port=5432,
+    dbname="gerijatrija_dbmain",
+    user="odoo",
+    password=os.environ["ODOO8_DB_PASSWORD"],
+) as check_conn:
+    with check_conn.cursor() as check_cur:
+        check_cur.execute("""
+            SELECT COUNT(*)
+            FROM medical_patient
+            WHERE photo IS NOT NULL
+              AND octet_length(photo) > 0
+        """)
+        expected = check_cur.fetchone()[0]
+
+print("EXPECTED PHOTOS:", expected)
+
+if exported + skipped != expected or errors:
     raise RuntimeError("PHOTO EXPORT VALIDATION FAILED")
 
 print("PHOTO EXPORT VALIDATION PASSED")

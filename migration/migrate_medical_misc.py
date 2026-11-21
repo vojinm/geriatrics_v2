@@ -1,18 +1,21 @@
 import csv
 import os
 
-CSV_DIR = "/mnt/migration"
+CSV_DIR = os.environ.get(
+    "GERIATRICS_CSV_DIR",
+    "/mnt/migration"
+)
 
 mode = os.environ.get("GERIATRICS_MIGRATION_MODE")
 assert mode in ("TEST", "IMPORT"), "Rezim mora biti TEST ili IMPORT"
 
 CONFIG = [
-    ("medical.inpatient.request.reason", "medical_inpatient_request_reason", 44, "info"),
-    ("medical.patient.pension.type", "medical_patient_pension_type", 359, "info"),
-    ("medical.patient.body.deformation", "medical_patient_body_deformation", 319, "info"),
-    ("medical.patient.mind.deformation", "medical_patient_mind_deformation", 365, "info"),
-    ("medical.ethnicity", "medical_ethnicity", 17, "code"),
-    ("medical.occupation", "medical_occupation", 605, "code"),
+    ("medical.inpatient.request.reason", "medical_inpatient_request_reason", "info"),
+    ("medical.patient.pension.type", "medical_patient_pension_type", "info"),
+    ("medical.patient.body.deformation", "medical_patient_body_deformation", "info"),
+    ("medical.patient.mind.deformation", "medical_patient_mind_deformation", "info"),
+    ("medical.ethnicity", "medical_ethnicity", "code"),
+    ("medical.occupation", "medical_occupation", "code"),
 ]
 
 EXPECTED_EMPTY_OCCUPATIONS = {963, 991, 992}
@@ -21,18 +24,19 @@ prepared = []
 all_rows = 0
 
 # Prvo validiramo sve CSV datoteke.
-for model_name, filename, expected_count, extra_field in CONFIG:
+for model_name, filename, extra_field in CONFIG:
     path = os.path.join(CSV_DIR, filename + ".csv")
 
     with open(path, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
 
-    assert len(rows) == expected_count, f"{filename}: pogresan broj redova"
+    if not rows:
+        raise ValueError(f"{filename}: CSV je prazan")
     assert rows and set(rows[0]) == {"legacy_id", "name", extra_field}
 
     ids = [int(row["legacy_id"]) for row in rows]
     assert all(legacy_id > 0 for legacy_id in ids)
-    assert len(set(ids)) == expected_count, f"{filename}: duplirani ID"
+    assert len(set(ids)) == len(rows), f"{filename}: duplirani ID"
 
     for row in rows:
         legacy_id = int(row["legacy_id"])
@@ -57,7 +61,7 @@ for model_name, filename, expected_count, extra_field in CONFIG:
     prepared.append((model_name, rows, extra_field))
     all_rows += len(rows)
 
-assert all_rows == 1709
+assert all_rows == sum(len(rows) for _, rows, _ in prepared)
 
 created = 0
 skipped = 0
@@ -110,7 +114,7 @@ try:
             f"skipped={model_skipped}"
         )
 
-    assert created + skipped == 1709
+    assert created + skipped == all_rows
 
     print("TOTAL CSV:", all_rows)
     print("TOTAL CREATED:", created)

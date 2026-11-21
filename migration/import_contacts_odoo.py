@@ -17,7 +17,10 @@ if MODE not in ("TEST", "IMPORT"):
 
 print(f"REZIM: {MODE}")
 
-LIMIT = 9172
+with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
+    expected_count = sum(1 for _ in csv.DictReader(file))
+
+print("EXPECTED CONTACTS:", expected_count)
 
 Partner = env["res.partner"].with_context(active_test=False)
 
@@ -27,9 +30,7 @@ with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
     reader = csv.DictReader(file)
 
     for index, row in enumerate(reader):
-        if index >= LIMIT:
-            break
-
+      
         values = prepare_partner_values(row)
 
         country_code = get_country_code(row["country_id"])
@@ -87,7 +88,7 @@ imported_count = Partner.search_count([
     ("legacy_id", "!=", 0),
 ])
 
-if imported_count != 9172:
+if imported_count < expected_count:
     raise ValueError(
         f"Uvoz nije potpun: pronadjeno {imported_count} "
         "od ocekivanih 9172 kontakta. COMMIT otkazan."

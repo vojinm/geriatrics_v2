@@ -2,7 +2,10 @@ import csv
 import os
 from datetime import datetime
 
-CSV_PATH = "/mnt/migration/medical_insurance_utf8.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "medical_insurance_utf8.csv",
+)
 TEST_MODE = os.environ.get("GERIATRICS_MIGRATION_MODE") == "TEST"
 
 # Zaštita od slučajnog pokretanja bez definisanog režima.
@@ -14,6 +17,15 @@ assert os.environ.get("GERIATRICS_MIGRATION_MODE") in (
 Insurance = env["medical.insurance"].sudo()
 Partner = env["res.partner"].sudo()
 
+existing_count = Insurance.with_context(
+    active_test=False
+).search_count([])
+
+if existing_count:
+    raise ValueError(
+        f"Ciljna tabela medical.insurance nije prazna: "
+        f"{existing_count} zapisa"
+    )
 
 def integer_or_false(value):
     return int(value) if value else False
@@ -26,13 +38,14 @@ def value_or_false(value):
 with open(CSV_PATH, encoding="utf-8-sig", newline="") as file:
     rows = list(csv.DictReader(file))
 
-assert len(rows) == 1790, (
-    f"Ocekivano 1790 osiguranja, pronadjeno {len(rows)}"
-)
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("medical_insurance_utf8.csv je prazan")
 
 legacy_ids = [int(row["legacy_id"]) for row in rows]
 
-assert len(set(legacy_ids)) == 1790, "Duplirani legacy_id"
+assert len(set(legacy_ids)) == EXPECTED_COUNT, "Duplirani legacy_id"
 assert all(value > 0 for value in legacy_ids), "Neispravan legacy_id"
 
 # Unaprijed ucitavamo sve potrebne kontakte.
@@ -125,7 +138,13 @@ try:
             (create_date, write_date, record_id),
         )
 
-    assert created + skipped == 1790
+    assert created + skipped == EXPECTED_COUNT, (
+        "Broj obradjenih osiguranja ne odgovara CSV-u"
+    )
+
+    assert created == EXPECTED_COUNT, (
+        "Nisu kreirana sva osiguranja iz CSV-a"
+    )
 
     print("CSV osiguranja:", len(rows))
     print("Kreirano:", created)

@@ -1,9 +1,11 @@
+import os
 import csv
 from pathlib import Path
 from collections import Counter
 
-CSV_PATH = Path("/mnt/migration/contracts.csv")
-EXPECTED_COUNT = 2489
+CSV_PATH = Path(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration")
+) / "contracts.csv"
 
 Partner = env["res.partner"].sudo().with_context(active_test=False)
 Patient = env["medical.patient"].sudo().with_context(active_test=False)
@@ -11,6 +13,18 @@ Contract = env["medical.patient.contract"].sudo()
 
 with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as f:
     rows = list(csv.DictReader(f))
+
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("contracts.csv is empty")
+
+expected_states = Counter(
+    row["state"].strip() for row in rows
+)
+
+if set(expected_states) - {"open", "closed", "draft"}:
+    raise ValueError("Unexpected contract states in CSV")
 
 contracts = Contract.search([])
 source_ids = [int(row["id"]) for row in rows]
@@ -103,16 +117,28 @@ without_patient = len(
     contracts.filtered(lambda c: not c.patient_id)
 )
 
-expected_states = {
-    "closed": 2009,
-    "open": 447,
-    "draft": 33,
-}
-
 if dict(states) != expected_states:
     differences["states"] += 1
 
-if without_patient != 50:
+source_patient_partner_ids = {
+    int(row["partner_legacy_id"])
+    for row in csv.DictReader(
+        open(
+            CSV_PATH.parent / "patients.csv",
+            encoding="utf-8-sig",
+            newline="",
+        )
+    )
+    if row["partner_legacy_id"].strip()
+}
+
+expected_without_patient = sum(
+    not row["partner_id"].strip()
+    or int(row["partner_id"]) not in source_patient_partner_ids
+    for row in rows
+)
+
+if without_patient != expected_without_patient:
     differences["without_patient"] += 1
 
 print("=" * 60)

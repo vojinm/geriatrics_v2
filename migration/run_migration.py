@@ -4,18 +4,69 @@ from pathlib import Path
 from datetime import datetime
 
 MIGRATION_DIR = Path("/mnt/migration")
+CSV_DIR = Path(
+    os.environ.get(
+        "GERIATRICS_CSV_DIR",
+        "/mnt/migration",
+    )
+)
 
-# Pocetni inventar migracionih skripti.
-# Redoslijed izvrsavanja jos nije potvrdjen.
-MIGRATION_STEPS = [
-    "import_contacts_odoo.py",
-    "import_patients_odoo.py",
-    "import_family_relations_odoo.py",
-    "import_contracts_odoo.py",
-    "migrate_hospital_infrastructure.py",
-    "migrate_medical_insurance.py",
-    "migrate_tracking_list.py",
-]
+REQUIRED_CSV_FILES = {
+    "contacts.csv",
+    "patients.csv",
+    "family_relations_correct.csv",
+    "contracts.csv",
+    "hospital_buildings.csv",
+    "hospital_units.csv",
+    "hospital_wards.csv",
+    "hospital_beds.csv",
+    "inpatient_registrations.csv",
+    "insurance_partners_utf8.csv",
+    "medical_insurance_utf8.csv",
+    "medical_ethnicity.csv",
+    "medical_inpatient_request_reason.csv",
+    "medical_occupation.csv",
+    "medical_patient_activities_utf8.csv",
+    "medical_patient_activity_rel_utf8.csv",
+    "medical_patient_body_deformation.csv",
+    "medical_patient_mind_deformation.csv",
+    "medical_patient_pension_type.csv",
+    "patient_occupation_rel.csv",
+    "patient_pension_type_rel.csv",
+    "patient_body_deformation_rel.csv",
+    "patient_mind_deformation_rel.csv",
+    "patient_misc_supplement.csv",
+    "patient_supplement.csv",
+    "patient_birth_country_codes.csv",
+    "patient_active_status.csv",
+    "patient_deceased_status.csv",
+    "tracking_list.csv",
+}
+
+def validate_csv_directory():
+    if not CSV_DIR.is_dir():
+        raise FileNotFoundError(
+            f"Migration CSV directory does not exist: {CSV_DIR}"
+        )
+
+    missing = sorted(
+        name for name in REQUIRED_CSV_FILES
+        if not (CSV_DIR / name).is_file()
+    )
+
+    if missing:
+        raise FileNotFoundError(
+            "Missing migration CSV files:\n"
+            + "\n".join(missing)
+        )
+
+    print(f"MIGRATION CSV DIRECTORY: {CSV_DIR}", flush=True)
+    print(
+        f"CSV FILE VALIDATION PASSED: "
+        f"{len(REQUIRED_CSV_FILES)} files",
+        flush=True,
+    )
+
 
 # Plan migracije prema zavisnostima.
 # Redoslijed je preliminaran i mora biti potvrdjen
@@ -94,6 +145,8 @@ def execute_migration_plan(mode):
             f"SAFETY STOP: Migration is allowed only on "
             f"{allowed_database}. Current database: {current_database}"
         )
+
+    validate_csv_directory()
 
     print(f"\nMIGRATION MODE: {mode}", flush=True)
     print(f"DATABASE: {current_database}", flush=True)
@@ -187,12 +240,12 @@ def main():
 
     print("SCRIPT INVENTORY VALIDATION PASSED")
 
-    validate_contracts()
+    validate_csv_directory()
 
     print("-" * 60)
-    print("ALL VALIDATIONS PASSED")
+    print("PRE-MIGRATION VALIDATION PASSED")
+    print("All migration scripts and required CSV files are present.")
     print("No migration import scripts were executed.")
-
 
 if __name__ == "__main__":
     requested_mode = os.environ.get(

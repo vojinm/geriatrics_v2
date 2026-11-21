@@ -5,7 +5,10 @@ from hospital_unit_mapping import (
     canonical_unit_legacy_id,
 )
 
-CSV_PATH = "/mnt/migration/inpatient_registrations.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "inpatient_registrations.csv",
+)
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
 if MODE not in ("TEST", "IMPORT"):
@@ -29,8 +32,19 @@ with open(CSV_PATH, encoding="utf-8-sig", newline="") as file:
 print("MODE:", MODE)
 print("CSV_RECORDS:", len(rows))
 
-if len(rows) != 2437:
-    raise ValueError("Unexpected number of CSV records")
+EXPECTED_COUNT = len(rows)
+
+if EXPECTED_COUNT == 0:
+    raise ValueError("inpatient_registrations.csv je prazan")
+
+legacy_ids = [int(row["legacy_id"]) for row in rows]
+
+if len(set(legacy_ids)) != EXPECTED_COUNT:
+    raise ValueError(
+        "Duplirani legacy_id u inpatient_registrations.csv"
+    )
+
+print("EXPECTED REGISTRATIONS:", EXPECTED_COUNT)
 
 def to_int(value):
     return int(value) if value and value.strip() else None
@@ -71,6 +85,15 @@ bed_map = {
 existing_ids = set(
     Registration.search([("legacy_id", ">", 0)]).mapped("legacy_id")
 )
+
+existing_count = Registration.search_count([])
+
+if existing_count:
+    raise ValueError(
+        "Ciljna tabela vec sadrzi hospitalizacije. "
+        f"Pronadjeno: {existing_count}. "
+        "Migracija zahtijeva potpuno praznu ciljnu tabelu."
+    )
 
 state_map = {
     "free": "discharged",
@@ -177,6 +200,8 @@ expected_missing_patient_ids = {
     186, 202, 1099, 1345, 1769, 1941, 1964
 }
 
+EXPECTED_CREATED = EXPECTED_COUNT - len(expected_missing_patient_ids)
+
 actual_missing_patient_ids = {
     legacy_id
     for legacy_id, message in errors
@@ -193,7 +218,7 @@ unexpected_errors = [
 if (
     unexpected_errors
     or actual_missing_patient_ids != expected_missing_patient_ids
-    or stats["created"] != 2430
+    or stats["created"] != EXPECTED_CREATED
 ):
     if os.environ.get("GERIATRICS_CONTROLLER_MODE") != "1":
         env.cr.rollback()

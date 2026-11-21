@@ -4,13 +4,20 @@ from datetime import date, datetime
 
 from odoo import fields
 
-CSV_PATH = "/mnt/migration/tracking_list.csv"
+CSV_PATH = os.path.join(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration"),
+    "tracking_list.csv",
+)
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
-EXPECTED_COUNT = 33092
 BATCH_SIZE = 500
 
 
 def migrate(env):
+    if env.cr.dbname != "geriatrics19_migration_test":
+        raise ValueError(
+            "Safety stop: migration allowed only on "
+            "geriatrics19_migration_test"
+        )
     Tracking = env["medical.patient.tracking.list"].sudo()
     Patient = env["medical.patient"].sudo().with_context(active_test=False)
 
@@ -40,14 +47,14 @@ def migrate(env):
                 )
 
             rows = list(reader)
+            EXPECTED_COUNT = len(rows)
+
+            if EXPECTED_COUNT == 0:
+                raise ValueError("tracking_list.csv je prazan")
 
         print("CSV_RECORDS:", len(rows))
 
-        if len(rows) != EXPECTED_COUNT:
-            raise ValueError(
-                f"Ocekivano {EXPECTED_COUNT}, pronadjeno {len(rows)}"
-            )
-
+        
         # 2. Provjera prazne ciljne tabele
         existing_count = Tracking.search_count([])
 
@@ -58,7 +65,9 @@ def migrate(env):
 
         # 3. Provjera originalnih ID-jeva
         legacy_ids = [int(row["legacy_id"]) for row in rows]
-
+        if any(legacy_id <= 0 for legacy_id in legacy_ids):
+            raise ValueError("Neispravan legacy_id u tracking CSV-u")
+        
         if len(set(legacy_ids)) != EXPECTED_COUNT:
             raise ValueError("CSV sadrzi duplirane legacy_id vrijednosti")
 
@@ -134,13 +143,7 @@ def migrate(env):
             1 for row in rows if not row["info"]
         )
 
-        if empty_info_expected != 3:
-            raise ValueError(
-                f"Ocekivana 3 prazna info polja, pronadjeno "
-                f"{empty_info_expected}"
-            )
-
-        # 6. Kreiranje zapisa u paketima
+            # 6. Kreiranje zapisa u paketima
         created = 0
 
         for start in range(0, len(values_list), BATCH_SIZE):
@@ -174,13 +177,33 @@ def migrate(env):
         if Tracking.search_count([("patient_id", "=", False)]):
             raise ValueError("Postoje zapisi bez pacijenta")
 
+        if created != EXPECTED_COUNT:
+            raise ValueError(
+                f"Kreirano {created}/{EXPECTED_COUNT} tracking zapisa"
+            )
+
+        actual_patient_links = {
+            record.legacy_id: record.patient_id.id
+            for record in records
+        }
+
+        for row in rows:
+            legacy_id = int(row["legacy_id"])
+            expected_patient_id = patient_map[int(row["legacy_patient_id"])]
+
+            if actual_patient_links.get(legacy_id) != expected_patient_id:
+                raise ValueError(
+                    f"Neispravna veza sa pacijentom za tracking {legacy_id}"
+                )
+
         empty_info_actual = Tracking.search_count([
             ("info", "=", False)
         ])
 
-        if empty_info_actual != 3:
+        if empty_info_actual != empty_info_expected:
             raise ValueError(
-                f"Pogresan broj praznih info polja: {empty_info_actual}"
+                f"Pogresan broj praznih info polja: "
+                f"{empty_info_actual}/{empty_info_expected}"
             )
 
         print("\nRESULTS:")

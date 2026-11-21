@@ -1,4 +1,6 @@
+import csv
 import os
+from pathlib import Path
 
 MODE = os.environ.get("GERIATRICS_MIGRATION_MODE", "TEST").upper()
 
@@ -10,8 +12,9 @@ import csv
 from pathlib import Path
 from collections import Counter
 
-CSV_PATH = Path("/mnt/migration/contracts.csv")
-EXPECTED_COUNT = 2489
+CSV_PATH = Path(
+    os.environ.get("GERIATRICS_CSV_DIR", "/mnt/migration")
+) / "contracts.csv"
 
 Partner = env["res.partner"].sudo().with_context(active_test=False)
 Patient = env["medical.patient"].sudo().with_context(active_test=False)
@@ -30,11 +33,44 @@ print("=== TRAJNI UVOZ UGOVORA ===")
 
 with CSV_PATH.open("r", encoding="utf-8-sig", newline="") as file:
     rows = list(csv.DictReader(file))
+EXPECTED_COUNT = len(rows)
+EXPECTED_STATES = Counter(
+    row["state"].strip() for row in rows
+)
+PATIENTS_CSV_PATH = CSV_PATH.parent / "patients.csv"
 
-if len(rows) != EXPECTED_COUNT:
+with PATIENTS_CSV_PATH.open(
+    "r", encoding="utf-8-sig", newline=""
+) as file:
+    patient_rows = list(csv.DictReader(file))
+
+patient_partner_ids = {
+    int(row["partner_legacy_id"])
+    for row in patient_rows
+}
+
+EXPECTED_WITHOUT_PATIENT = sum(
+    1
+    for row in rows
+    if not row["partner_id"].strip()
+    or int(row["partner_id"]) not in patient_partner_ids
+)
+
+print(f"EXPECTED CONTRACTS WITHOUT PATIENT: {EXPECTED_WITHOUT_PATIENT}")
+
+if set(EXPECTED_STATES) - {"draft", "open", "closed"}:
     raise ValueError(
-        f"CSV sadrzi {len(rows)} ugovora, ocekivano {EXPECTED_COUNT}"
+        f"Nepoznati statusi u CSV-u: {EXPECTED_STATES}"
     )
+if EXPECTED_COUNT == 0:
+    raise ValueError("contracts.csv je prazan")
+
+legacy_ids = [int(row["id"]) for row in rows]
+
+if len(set(legacy_ids)) != EXPECTED_COUNT:
+    raise ValueError("Duplirani legacy ID u contracts.csv")
+
+print(f"EXPECTED CONTRACTS: {EXPECTED_COUNT}")
 
 partners = {
     p.legacy_id: p.id
@@ -46,6 +82,32 @@ patients = {
     for p in Patient.search([])
     if p.partner_id
 }
+
+expected_patient_partner_ids = set(patient_partner_ids)
+
+actual_patient_partner_ids = {
+    legacy_id
+    for legacy_id in expected_patient_partner_ids
+    if partners.get(legacy_id) in patients
+}
+
+missing_patient_partner_ids = (
+    expected_patient_partner_ids - actual_patient_partner_ids
+)
+
+if missing_patient_partner_ids:
+    raise ValueError(
+        f"Nedostaje {len(missing_patient_partner_ids)} "
+        f"pacijenata iz patients.csv. "
+        f"Primjeri partner legacy ID: "
+        f"{sorted(missing_patient_partner_ids)[:10]}"
+    )
+
+print(
+    f"PATIENT MAPPING OK: "
+    f"{len(actual_patient_partner_ids)} / "
+    f"{len(expected_patient_partner_ids)}"
+)
 
 def partner_id(value):
     value = (value or "").strip()
@@ -123,17 +185,17 @@ try:
             f"Uvezeno {created}, ocekivano {EXPECTED_COUNT}"
         )
 
-    if without_patient != 50:
+    if without_patient != EXPECTED_WITHOUT_PATIENT:
         raise ValueError(
-            f"Bez pacijenta: {without_patient}, ocekivano 50"
+            f"Bez pacijenta: {without_patient}, "
+            f"ocekivano {EXPECTED_WITHOUT_PATIENT}"
         )
 
-    if states != Counter({
-        "closed": 2009,
-        "open": 447,
-        "draft": 33,
-    }):
-        raise ValueError(f"Neocekivani statusi: {states}")
+    if states != EXPECTED_STATES:
+        raise ValueError(
+            f"Statusi ugovora nisu uskladjeni: "
+            f"CSV={EXPECTED_STATES}, Odoo={states}"
+        )
 
     print(f"PROVJERA USPJESNA: {created} ugovora")
     print(f"Bez pacijenta: {without_patient}")
